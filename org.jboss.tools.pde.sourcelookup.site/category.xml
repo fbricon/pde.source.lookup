@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.jboss.tools.pde.sourcelookup.feature_0.0.0.qualifier.jar" id="org.jboss.tools.pde.sourcelookup.feature" version="0.0.0">
+      <category name="pde.source.lookup"/>
+   </feature>
+   <category-def name="pde.source.lookup" label="PDE Source Lookup"/>
+</site>

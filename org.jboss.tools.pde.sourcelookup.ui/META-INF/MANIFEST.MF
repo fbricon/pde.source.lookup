@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDE Source Lookup UI
+Bundle-SymbolicName: org.jboss.tools.pde.sourcelookup.ui;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-Activator: org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator
+Bundle-Vendor: Red Hat, Inc.
+Require-Bundle: org.eclipse.core.runtime,
+ org.jboss.tools.pde.sourcelookup.core;bundle-version="0.0.1",
+ org.eclipse.ui.workbench,
+ org.eclipse.swt,
+ org.eclipse.debug.ui,
+ org.eclipse.jface,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.ui,
+ org.eclipse.equinox.p2.metadata,
+ org.eclipse.equinox.p2.core;bundle-version="2.4.100",
+ org.eclipse.equinox.p2.repository,
+ org.eclipse.equinox.p2.ui,
+ org.eclipse.equinox.p2.operations;bundle-version="2.4.100"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy

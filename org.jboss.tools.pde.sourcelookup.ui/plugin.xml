@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension point="org.eclipse.ui.editorActions">
+      <editorContribution id="org.jboss.tools.pde.sourcelookup.ui.downloadSourcesContribution"
+                          targetID="org.eclipse.jdt.ui.ClassFileEditor">
+         <action id="org.jboss.tools.pde.sourcelookup.ui.downloadSourcesAction"
+              class="org.jboss.tools.pde.sourcelookup.ui.internal.actions.DownloadSourcesActionDelegate"
+              label="Download Bundle Sources" style="push"/>
+      </editorContribution>
+      <editorContribution id="org.jboss.tools.pde.sourcelookup.ui.downloadSourcesContribution2"
+      		              targetID="org.eclipse.jdt.ui.ClassFileEditorNoSource">
+        <action id="org.jboss.tools.pde.sourcelookup.ui.downloadSourcesAction2"
+              class="org.jboss.tools.pde.sourcelookup.ui.internal.actions.DownloadSourcesActionDelegate"
+              label="Download Bundle Sources" style="push"/>
+      </editorContribution>
+   </extension>
+   
+      <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.jboss.tools.pde.sourcelookup.ui.internal.Startup"></startup>
+   </extension>
+</plugin>
