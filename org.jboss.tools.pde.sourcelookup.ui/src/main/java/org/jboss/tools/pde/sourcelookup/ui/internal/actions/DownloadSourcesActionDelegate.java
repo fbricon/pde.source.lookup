@@ -101,13 +101,6 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 	}
 
 	private void scheduleDownload(IPackageFragmentRoot fragment) throws CoreException {
-		IProject project = fragment.getJavaProject().getProject();
-		if (!ProjectUtils.isPluginProject(project)) {
-			return;
-		}
-		if (hasSources(fragment)) {
-			return;
-		}
 		new P2SourceDownloadJob(fragment).schedule();
 	}
 
