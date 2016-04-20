@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -103,14 +102,7 @@ public class P2SourceDownloadJob extends Job {
 	}
 
 	private boolean isValid(IPackageFragmentRoot fragment) {
-		if (fragment instanceof JarPackageFragmentRoot) {
-			try (ZipFile zip = ((JarPackageFragmentRoot) fragment).getJar()) {
-				return BundleUtil.isBundle(zip);
-			} catch (CoreException | IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return false;
+		return BundleUtil.isBundle(fragment.getPath().toFile());
 	}
 
 	private IPath findSources(IPackageFragmentRoot fragment, IProgressMonitor monitor)
@@ -119,7 +111,7 @@ public class P2SourceDownloadJob extends Job {
 			return null;
 		}
 		monitor.setTaskName(fragment.getElementName());
-		IArtifactKey artifactKey = BundleUtil.getArtifactKey(((JarPackageFragmentRoot) fragment).getJar());
+		IArtifactKey artifactKey = BundleUtil.getArtifactKey(fragment.getPath().toFile());
 
 		IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 

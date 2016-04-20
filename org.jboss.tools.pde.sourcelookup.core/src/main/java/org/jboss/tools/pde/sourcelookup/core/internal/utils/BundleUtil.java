@@ -12,16 +12,14 @@ package org.jboss.tools.pde.sourcelookup.core.internal.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.Dictionary;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
+import org.eclipse.osgi.util.ManifestElement;
+import org.osgi.framework.BundleException;
 
 @SuppressWarnings("restriction")
 public class BundleUtil {
@@ -34,25 +32,6 @@ public class BundleUtil {
 		return getArtifactKey(file) != null;
 	}
 
-	public static boolean isBundle(ZipFile jar) {
-		return getArtifactKey(jar) != null;
-	}
-
-	private static Manifest getManifest(ZipFile jar) throws IOException {
-		Manifest manifest = null;
-		if (jar instanceof JarFile) {
-			manifest = ((JarFile) jar).getManifest();
-		} else {
-			ZipEntry manifestEntry = jar.getEntry(JarFile.MANIFEST_NAME);
-			if (manifestEntry != null) {
-				try (InputStream manifestStream = jar.getInputStream(manifestEntry)) {
-					manifest = new Manifest(manifestStream);
-				}
-			}
-		}
-		return manifest;
-	}
-
 	public static IArtifactKey getArtifactKey(File file) {
 		if (file == null || !file.isFile()) {
 			return null;
@@ -61,37 +40,23 @@ public class BundleUtil {
 		if (!"jar".equals(extension)) {
 			return null;
 		}
-		try (JarFile jar = new JarFile(file)) {
-			return getArtifactKey(jar.getManifest());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
-	public static IArtifactKey getArtifactKey(ZipFile file) {
-		if (file == null) {
-			return null;
-		}
+		String id = null;
+		String version = null;
 		try {
-			Manifest manifest = getManifest(file);
-			IArtifactKey bundleModel = getArtifactKey(manifest);
-			return bundleModel;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static IArtifactKey getArtifactKey(Manifest manifest) {
-		if (manifest == null) {
+			Dictionary<String, String> manifest = BundlesAction.loadManifest(file);
+			if (manifest != null) {
+				id = ManifestElement.parseHeader("Bundle-SymbolicName",
+						manifest.get("Bundle-SymbolicName"))
+						[0].getValue();
+				version = manifest.get("Bundle-Version");
+			}
+		} catch (IOException | BundleException | IllegalArgumentException e) {
 			return null;
 		}
-		String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
-		name = StringUtils.substringBefore(name, ";");
-		String version = manifest.getMainAttributes().getValue("Bundle-Version");
-		if (StringUtils.isNotBlank(name) && StringUtils.isNotBlank(version)) {
-			return BundlesAction.createBundleArtifactKey(name, version);
+
+		if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(version)) {
+			return BundlesAction.createBundleArtifactKey(id, version);
 		}
 		return null;
 	}
