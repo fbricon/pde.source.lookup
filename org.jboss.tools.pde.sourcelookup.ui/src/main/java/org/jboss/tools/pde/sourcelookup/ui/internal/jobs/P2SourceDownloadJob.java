@@ -17,11 +17,13 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,36 +52,54 @@ import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
 
 @SuppressWarnings("restriction")
 public class P2SourceDownloadJob extends Job {
-	// TODO make a singleton
-	// queue search queries
 
-	private IPackageFragmentRoot fragment;
+	private final Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
 
-	public P2SourceDownloadJob(IPackageFragmentRoot fragment) {
-		super("PDE Source Download");
-		Assert.isNotNull(fragment, "Fragment can not be null");
-		this.fragment = fragment;
+	public P2SourceDownloadJob() {
+		super("Plugin Source Download");
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		monitor.setTaskName("Searching sources for "+fragment.getElementName());
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		Collection<IPackageFragmentRoot> currentQueue;
+		synchronized (this.queue) {
+			currentQueue = new LinkedHashSet<>(this.queue);
+			this.queue.clear();
+		}
 
+		for (IPackageFragmentRoot fragment : currentQueue) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			findAndAttachSources(fragment, monitor);
+		}
+		// schedule remaining requests that were added during this run
+		synchronized (this.queue) {
+			if (!queue.isEmpty()) {
+				schedule();
+			}
+		}
+		return Status.OK_STATUS;
+	}
+
+	private void findAndAttachSources(IPackageFragmentRoot fragment, IProgressMonitor monitor) {
+		monitor.setTaskName("Searching sources for "+fragment.getElementName());
 		// Check if fragment is a bundle, else bail
 		if (!isValid(fragment)) {
-			return Status.OK_STATUS;
+			return;
 		}
-		System.err.println("Searching sources for " + fragment.getElementName());
 		try {
 			IPath path = findSources(fragment, monitor);
 			if (path != null) {
-				System.err.println("Attaching " + path);
+				// System.err.println("Attaching " + path);
 				attachSource(fragment, path, monitor);
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-		return Status.OK_STATUS;
 	}
 
 	private boolean isValid(IPackageFragmentRoot fragment) {
@@ -98,12 +118,13 @@ public class P2SourceDownloadJob extends Job {
 		if (!(fragment instanceof JarPackageFragmentRoot)) {
 			return null;
 		}
+		monitor.setTaskName(fragment.getElementName());
 		IArtifactKey artifactKey = BundleUtil.getArtifactKey(((JarPackageFragmentRoot) fragment).getJar());
 
 		IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
 		Path cacheFolder = SourceLookupPreferences.getDownloadedSourcesDirectory();
-		IPath localCache = getLocalSourcePathIfExists(cacheFolder, artifactKey);
+		IPath localCache = getLocalSourcePathIfExists(cacheFolder, sourceKey);
 		if (localCache != null) {
 			return localCache;
 		}
@@ -115,24 +136,19 @@ public class P2SourceDownloadJob extends Job {
 		Collections.sort(uris);// stupid trick to make eclipse.org repos being
 		// searched almost first
 
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		System.err.println("Searching for " + sourceKey.getId() + "_" + sourceKey.getVersion());
-
+		// System.err.println("Searching sources for " +
+		// fragment.getElementName());
 		for (URI repo : uris) {
 			if (monitor.isCanceled()) {
 				return null;
 			}
 			try {
-				System.err.println("Loading p2 repo at " + repo);
 				IArtifactRepository artifactRepo = provisioningUI.loadArtifactRepository(repo, false, monitor);
 				if (!artifactRepo.contains(sourceKey)) {
 					continue;
 				}
 				IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
 				if (results.length == 1) {
-					System.err.println("found " + sourceKey.getId() + " in " + repo);
 					return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);
 				}
 			} catch (ProvisionException | OperationCanceledException | IOException e) {
@@ -140,7 +156,6 @@ public class P2SourceDownloadJob extends Job {
 				return null;
 			}
 		}
-		System.err.println("Nope");
 		return null;
 	}
 
@@ -224,6 +239,15 @@ public class P2SourceDownloadJob extends Job {
 					newEntry.getReferencingEntry() != null, monitor);
 		} catch (CoreException e) {
 			// ignore
+		}
+	}
+
+	public void queue(IPackageFragmentRoot... fragments) {
+		if (fragments == null || fragments.length == 0) {
+			return;
+		}
+		synchronized (queue) {
+			queue.addAll(Arrays.asList(fragments));
 		}
 	}
 

@@ -11,7 +11,9 @@
 package org.jboss.tools.pde.sourcelookup.ui.internal.actions;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +29,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ProjectUtils;
-import org.jboss.tools.pde.sourcelookup.ui.internal.jobs.P2SourceDownloadJob;
+import org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator;
 
 @SuppressWarnings("restriction")
 public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IObjectActionDelegate {
@@ -39,17 +41,21 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 		if (selection == null || selection.isEmpty()) {
 			return;
 		}
+		Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
 		for(Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object element = it.next();
 			if(element instanceof IPackageFragmentRoot) {
 				IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
 				try {
-					process(fragment);
+					if (canProcess(fragment)) {
+						queue.add(fragment);
+					}
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
 			}
 		}
+		findSources(queue);
 	}
 
 	@Override
@@ -69,6 +75,7 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart part) {
 		if (part != null && part.getEditorInput() instanceof IClassFileEditorInput) {
+			Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
 			try {
 				IClassFileEditorInput input = (IClassFileEditorInput) part.getEditorInput();
 				IJavaElement element = input.getClassFile();
@@ -76,32 +83,32 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 					element = element.getParent();
 					if (element instanceof IPackageFragmentRoot) {
 						IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
-						process(fragment);
+						if (canProcess(fragment)) {
+							queue.add(fragment);
+						}
 					}
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			findSources(queue);
 		}
 	}
 
-	private void process(IPackageFragmentRoot fragment) throws CoreException {
-		if (!belongsToPluginProject(fragment)) {
-			return;
+	private void findSources(Set<IPackageFragmentRoot> queue) {
+		if (!queue.isEmpty()) {
+			UIActivator.getInstance().getSourceLookupManager()
+			.findSources(queue.toArray(new IPackageFragmentRoot[queue.size()]));
 		}
+	}
 
-		if (!hasSources(fragment)) {
-			scheduleDownload(fragment);
-		}
+	private boolean canProcess(IPackageFragmentRoot fragment) throws CoreException {
+		return belongsToPluginProject(fragment) && !hasSources(fragment);
 	}
 
 	private boolean belongsToPluginProject(IPackageFragmentRoot fragment) {
 		IProject project = fragment.getJavaProject() == null ? null : fragment.getJavaProject().getProject();
 		return ProjectUtils.isPluginProject(project);
-	}
-
-	private void scheduleDownload(IPackageFragmentRoot fragment) throws CoreException {
-		new P2SourceDownloadJob(fragment).schedule();
 	}
 
 	private boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
