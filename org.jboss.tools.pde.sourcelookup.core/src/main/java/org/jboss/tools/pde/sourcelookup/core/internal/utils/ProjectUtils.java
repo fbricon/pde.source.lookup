@@ -28,6 +28,9 @@ public class ProjectUtils {
 	}
 
 	public static boolean hasNature(IProject project, String natureId) {
+		if (project == null) {
+			return false;
+		}
 		try {
 			return project.hasNature(natureId);
 		} catch (CoreException O_o) {

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Objects;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -28,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ProjectUtils;
 import org.jboss.tools.pde.sourcelookup.ui.internal.jobs.P2SourceDownloadJob;
 
+@SuppressWarnings("restriction")
 public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IObjectActionDelegate {
 
 	private IStructuredSelection selection;
@@ -40,24 +42,14 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 		for(Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object element = it.next();
 			if(element instanceof IPackageFragmentRoot) {
-				scheduleDownload((IPackageFragmentRoot) element);
+				IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
+				try {
+					process(fragment);
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-	}
-
-	private void scheduleDownload(IPackageFragmentRoot fragment) {
-		IProject project = fragment.getJavaProject().getProject();
-		if (!ProjectUtils.isPluginProject(project)) {
-			return;
-		}
-		if(hasSources(fragment)) {
-			return;
-		}
-		new P2SourceDownloadJob(fragment).schedule();
-	}
-
-	private boolean hasSources(IPackageFragmentRoot fragment) {
-		return false;
 	}
 
 	@Override
@@ -74,13 +66,6 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 		//Don't care
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.
-	 * action.IAction, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IAction action, IEditorPart part) {
 		if (part != null && part.getEditorInput() instanceof IClassFileEditorInput) {
@@ -91,18 +76,45 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 					element = element.getParent();
 					if (element instanceof IPackageFragmentRoot) {
 						IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
-						IPath filePath = fragment.getPath();
-						IPath sourcePath = fragment.getSourceAttachmentPath();
-						if (Objects.equals(sourcePath, filePath)) {
-							//TODO check that sourcePath actualy contains the proper source file
-							scheduleDownload(fragment);
-						}
-
+						process(fragment);
 					}
 				}
 			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 		}
+	}
+
+	private void process(IPackageFragmentRoot fragment) throws CoreException {
+		if (!belongsToPluginProject(fragment)) {
+			return;
+		}
+
+		if (!hasSources(fragment)) {
+			scheduleDownload(fragment);
+		}
+	}
+
+	private boolean belongsToPluginProject(IPackageFragmentRoot fragment) {
+		IProject project = fragment.getJavaProject() == null ? null : fragment.getJavaProject().getProject();
+		return ProjectUtils.isPluginProject(project);
+	}
+
+	private void scheduleDownload(IPackageFragmentRoot fragment) throws CoreException {
+		IProject project = fragment.getJavaProject().getProject();
+		if (!ProjectUtils.isPluginProject(project)) {
+			return;
+		}
+		if (hasSources(fragment)) {
+			return;
+		}
+		new P2SourceDownloadJob(fragment).schedule();
+	}
+
+	private boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
+		IPath filePath = fragment.getPath();
+		IPath sourcePath = fragment.getSourceAttachmentPath();
+		return !Objects.equals(sourcePath, filePath);
 	}
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 
+@SuppressWarnings("restriction")
 public class BundleUtil {
 
 	private BundleUtil() {
@@ -37,11 +38,6 @@ public class BundleUtil {
 		return getArtifactKey(jar) != null;
 	}
 
-	/**
-	 * @param jar
-	 * @return
-	 * @throws IOException
-	 */
 	private static Manifest getManifest(ZipFile jar) throws IOException {
 		Manifest manifest = null;
 		if (jar instanceof JarFile) {
