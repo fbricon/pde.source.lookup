@@ -9,13 +9,18 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.jdt.core,
  org.eclipse.ui.workbench,
- org.eclipse.equinox.p2.operations;bundle-version="2.4.100",
- org.eclipse.pde.api.tools;bundle-version="1.1.0",
- org.eclipse.pde.core;bundle-version="3.11.0",
- org.apache.commons.lang3;bundle-version="3.1.0"
+ org.eclipse.equinox.p2.operations,
+ org.eclipse.pde.api.tools,
+ org.eclipse.pde.core,
+ org.apache.commons.lang3;bundle-version="3.1.0",
+ org.eclipse.equinox.p2.artifact.repository,
+ org.eclipse.equinox.p2.repository,
+ org.eclipse.equinox.p2.publisher,
+ org.eclipse.equinox.p2.publisher.eclipse,
+ org.eclipse.equinox.p2.metadata,
+ org.eclipse.equinox.p2.metadata.repository
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.jboss.tools.pde.sourcelookup.ui",
- org.jboss.tools.pde.sourcelookup.core.internal.model,
  org.jboss.tools.pde.sourcelookup.core.internal.preferences;x-friends:="org.jboss.tools.pde.sourcelookup.ui",
  org.jboss.tools.pde.sourcelookup.core.internal.utils;x-friends:="org.jboss.tools.pde.sourcelookup.ui"

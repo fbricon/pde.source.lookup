@@ -17,9 +17,10 @@ import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
-	private static final Path DOWNLOADED_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.dir"), ".eclipse", CoreActivator.PLUGIN_ID);
+	private static final Path DOWNLOADED_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
+			CoreActivator.PLUGIN_ID, "sources");
 
-	public Path getDownloadedSourcesDirectory() {
+	public static Path getDownloadedSourcesDirectory() {
 		return DOWNLOADED_SOURCES_DIRECTORY;
 	}
 }

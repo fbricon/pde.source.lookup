@@ -20,7 +20,8 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.Path;
-import org.jboss.tools.pde.sourcelookup.core.internal.model.BundleModel;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 
 public class BundleUtil {
 
@@ -29,11 +30,11 @@ public class BundleUtil {
 	}
 
 	public static boolean isBundle(File file) {
-		return getBundleModel(file) != null;
+		return getArtifactKey(file) != null;
 	}
 
 	public static boolean isBundle(ZipFile jar) {
-		return getBundleModel(jar) != null;
+		return getArtifactKey(jar) != null;
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class BundleUtil {
 		return manifest;
 	}
 
-	public static BundleModel getBundleModel(File file) {
+	public static IArtifactKey getArtifactKey(File file) {
 		if (file == null || !file.isFile()) {
 			return null;
 		}
@@ -65,20 +66,20 @@ public class BundleUtil {
 			return null;
 		}
 		try (JarFile jar = new JarFile(file)) {
-			return getBundleModel(jar.getManifest());
+			return getArtifactKey(jar.getManifest());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static BundleModel getBundleModel(ZipFile file) {
+	public static IArtifactKey getArtifactKey(ZipFile file) {
 		if (file == null) {
 			return null;
 		}
 		try {
 			Manifest manifest = getManifest(file);
-			BundleModel bundleModel = getBundleModel(manifest);
+			IArtifactKey bundleModel = getArtifactKey(manifest);
 			return bundleModel;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,7 +87,7 @@ public class BundleUtil {
 		return null;
 	}
 
-	public static BundleModel getBundleModel(Manifest manifest) {
+	public static IArtifactKey getArtifactKey(Manifest manifest) {
 		if (manifest == null) {
 			return null;
 		}
@@ -94,9 +95,20 @@ public class BundleUtil {
 		name = StringUtils.substringBefore(name, ";");
 		String version = manifest.getMainAttributes().getValue("Bundle-Version");
 		if (StringUtils.isNotBlank(name) && StringUtils.isNotBlank(version)) {
-			return new BundleModel(name, version);
+			return BundlesAction.createBundleArtifactKey(name, version);
 		}
 		return null;
+	}
+
+	public static IArtifactKey toSourceKey(IArtifactKey key) {
+		if (key == null) {
+			return null;
+		}
+		String name = key.getId();
+		if (name.endsWith(".source")) {
+			return key;
+		}
+		return BundlesAction.createBundleArtifactKey(name + ".source", key.getVersion().toString());
 	}
 
 }

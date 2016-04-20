@@ -11,8 +11,10 @@
 package org.jboss.tools.pde.sourcelookup.ui.internal.actions;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
@@ -88,7 +90,14 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 				while (element.getParent() != null) {
 					element = element.getParent();
 					if (element instanceof IPackageFragmentRoot) {
-						scheduleDownload((IPackageFragmentRoot) element);
+						IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
+						IPath filePath = fragment.getPath();
+						IPath sourcePath = fragment.getSourceAttachmentPath();
+						if (Objects.equals(sourcePath, filePath)) {
+							//TODO check that sourcePath actualy contains the proper source file
+							scheduleDownload(fragment);
+						}
+
 					}
 				}
 			} catch (Exception ex) {
