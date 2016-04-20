@@ -15,11 +15,11 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.javaeditor.IClassFileEditorInput;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,7 +28,6 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.jboss.tools.pde.sourcelookup.core.internal.utils.ProjectUtils;
 import org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator;
 
 @SuppressWarnings("restriction")
@@ -103,12 +102,15 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 	}
 
 	private boolean canProcess(IPackageFragmentRoot fragment) throws CoreException {
-		return belongsToPluginProject(fragment) && !hasSources(fragment);
+		return isBinaryProject(fragment) && !hasSources(fragment);
 	}
 
-	private boolean belongsToPluginProject(IPackageFragmentRoot fragment) {
-		IProject project = fragment.getJavaProject() == null ? null : fragment.getJavaProject().getProject();
-		return ProjectUtils.isPluginProject(project);
+	private boolean isBinaryProject(IPackageFragmentRoot fragment) {
+		try {
+			return fragment.getKind() == IPackageFragmentRoot.K_BINARY;
+		} catch (JavaModelException e) {
+			return false;
+		}
 	}
 
 	private boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
