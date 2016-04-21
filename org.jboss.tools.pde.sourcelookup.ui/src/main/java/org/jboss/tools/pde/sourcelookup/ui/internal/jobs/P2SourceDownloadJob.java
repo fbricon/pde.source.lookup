@@ -148,7 +148,7 @@ public class P2SourceDownloadJob extends Job {
 					continue;
 				}
 				IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
-				if (results.length == 1) {
+				if (results.length > 0) {
 					return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);
 				}
 			} catch (ProvisionException | OperationCanceledException | IOException e) {
