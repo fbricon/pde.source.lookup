@@ -17,17 +17,4 @@
 	<artifactId>org.jboss.tools.pde.sourcelookup.ui.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
 
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>tycho-surefire-plugin</artifactId>
-        <configuration>
-          <testSuite>org.jboss.tools.pde.sourcelookup.ui.tests</testSuite>
-          <testClass>org.jboss.tools.pde.sourcelookup.ui.tests.AllTests</testClass>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
