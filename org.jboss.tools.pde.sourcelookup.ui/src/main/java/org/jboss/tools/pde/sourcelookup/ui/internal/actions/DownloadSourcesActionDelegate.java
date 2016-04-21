@@ -114,7 +114,7 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 	private boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
 		IPath filePath = fragment.getPath();
 		IPath sourcePath = fragment.getSourceAttachmentPath();
-		return !Objects.equals(sourcePath, filePath);
+		return sourcePath == null || !Objects.equals(sourcePath, filePath);
 	}
 
 }
