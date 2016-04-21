@@ -35,6 +35,7 @@
   <modules>
     <module>org.jboss.tools.pde.sourcelookup.core</module>
     <module>org.jboss.tools.pde.sourcelookup.ui</module>
+    <module>org.jboss.tools.pde.sourcelookup.ui.tests</module>
     <module>org.jboss.tools.pde.sourcelookup.feature</module>
     <module>org.jboss.tools.pde.sourcelookup.site</module>
   </modules>

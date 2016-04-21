@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDE Source Lookup UI Tests
+Bundle-SymbolicName: org.jboss.tools.pde.sourcelookup.ui.tests;singleton:=true
+Bundle-Version: 0.0.2.qualifier
+Fragment-Host: org.jboss.tools.pde.sourcelookup.ui
+Bundle-Vendor: Red Hat Inc.
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit;bundle-version="4.12.0"
