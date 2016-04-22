@@ -115,7 +115,7 @@ public class P2SourceDownloadJob extends Job {
 
 		IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
-		Path cacheFolder = SourceLookupPreferences.getDownloadedSourcesDirectory();
+		Path cacheFolder = SourceLookupPreferences.getInstance().getDownloadedSourcesDirectory();
 		IPath localCache = getLocalSourcePathIfExists(cacheFolder, sourceKey);
 		if (localCache != null) {
 			return localCache;

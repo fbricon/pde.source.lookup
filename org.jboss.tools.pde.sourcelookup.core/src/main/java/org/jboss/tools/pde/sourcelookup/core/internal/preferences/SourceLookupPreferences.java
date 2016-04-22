@@ -17,10 +17,27 @@ import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
-	private static final Path DOWNLOADED_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
+	private static final SourceLookupPreferences INSTANCE = new SourceLookupPreferences();
+
+	private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
 			CoreActivator.PLUGIN_ID, "sources");
 
-	public static Path getDownloadedSourcesDirectory() {
-		return DOWNLOADED_SOURCES_DIRECTORY;
+	private Path downloadedSourcesDirectory;
+
+	private SourceLookupPreferences() {
+		downloadedSourcesDirectory = DEFAULT_SOURCES_DIRECTORY;
+	}
+
+	public static SourceLookupPreferences getInstance() {
+		return INSTANCE;
+	}
+
+	public Path getDownloadedSourcesDirectory() {
+		return downloadedSourcesDirectory;
+	}
+
+	// For testing purposes only
+	public void setDownloadedSourcesDirectory(Path sourcesDirectory) {
+		downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY : sourcesDirectory;
 	}
 }

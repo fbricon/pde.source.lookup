@@ -12,7 +12,14 @@
 package org.jboss.tools.pde.sourcelookup.ui.tests;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +31,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -39,12 +45,39 @@ import org.junit.Test;
 
 public class IntegrationTest {
 
+	private Path sourcesDirectory;
+
 	@Before
 	public void setUp() throws Exception {
+		sourcesDirectory = Paths.get("target", "sources");
+		SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(sourcesDirectory);
+		deleteDirectory(sourcesDirectory);
+	}
+
+	private void deleteDirectory(java.nio.file.Path directory) throws IOException {
+		if (!Files.exists(directory)) {
+			return;
+		}
+		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
+
+		});
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		//reset sources directory
+		SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(null);
 	}
 
 	@Test
@@ -54,7 +87,7 @@ public class IntegrationTest {
 		final String jarName = id + "_" + version + ".jar";
 		final String sourceJarName = id + ".source" + "_" + version + ".jar";
 		final String resourceDir = "/resources/";
-		final String sourceRepoRelPath = resourceDir + "source-repo";
+		final String sourceRepoRelPath = resourceDir + "valid-source-repo";
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject("integration-test");
@@ -70,7 +103,7 @@ public class IntegrationTest {
 
 		// binary jar file location
 		String jarPath = FileLocator.toFileURL(getClass().getResource(resourceDir + jarName)).getPath();
-		IPath binJarPath = Path.fromOSString(jarPath);
+		IPath binJarPath = org.eclipse.core.runtime.Path.fromOSString(jarPath);
 
 		// Add the binary jar to the classpath of the java project
 		List<IClasspathEntry> newCPE = new ArrayList<>(Arrays.asList(jProject.getRawClasspath()));
@@ -84,28 +117,32 @@ public class IntegrationTest {
 		pfr.attachSource(binJarPath, null, new NullProgressMonitor());
 
 		// source jar artifact repository location
-		String sourcePath = FileLocator.toFileURL(getClass().getResource(sourceRepoRelPath)).getPath();
-		URI sourceLoc = URI.create("file:" + sourcePath);
+		URI sourceLoc = getSourceRepoURL(sourceRepoRelPath);
 
 		// Inform the provisioning agent of the artifact repository containing
 		// the source bundle
 		ProvisioningUI pui = ProvisioningUI.getDefaultUI();
 		pui.getRepositoryTracker().addRepository(sourceLoc, null, pui.getSession());
+		pui.getRepositoryTracker().addRepository(getSourceRepoURL(resourceDir+"invalid-source-repo" ), null, pui.getSession());
 
 		// Simulate opening the classfile in the editor
 		// TODO: Could we ever get JavaUI.openInEditor working with Tycho ?
-//		IJavaElement jElement = jProject.findType("org.foo.bar.Main");
-//		JavaUI.openInEditor(jElement);
+		//		IJavaElement jElement = jProject.findType("org.foo.bar.Main");
+		//		JavaUI.openInEditor(jElement);
 		DownloadSourcesActionDelegate delegate = new DownloadSourcesActionDelegate();
 		delegate.selectionChanged(null, new StructuredSelection(jProject.getPackageFragmentRoot(jarPath)));
 		delegate.run(null);
 
-		// Exepect to find the downloaded jar at this location
-		File downloadedSourceJarFile = SourceLookupPreferences.getDownloadedSourcesDirectory()
-				.resolve(sourceJarName).toFile();
+		// Expect to find the downloaded jar at this location
+		File downloadedSourceJarFile = sourcesDirectory.resolve(sourceJarName).toFile();
 		while (!downloadedSourceJarFile.exists()) {
 			Thread.sleep(1000);
 		}
+	}
+
+	private URI getSourceRepoURL(final String relativePath) throws IOException {
+		String sourcePath = FileLocator.toFileURL(getClass().getResource(relativePath)).getPath();
+		return URI.create("file:" + sourcePath);
 	}
 
 }

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?metadataRepository version='1.1.0'?>
+<repository name='file:/home/rgrunber/git/pde.source.lookup/org.jboss.tools.pde.sourcelookup.ui.tests/resources/source-repo/ - metadata' type='org.eclipse.equinox.internal.p2.metadata.repository.LocalMetadataRepository' version='1'>
+  <properties size='2'>
+    <property name='p2.timestamp' value='1461203601720'/>
+    <property name='p2.compressed' value='true'/>
+  </properties>
+  <units size='0'>
+  </units>
+</repository>
