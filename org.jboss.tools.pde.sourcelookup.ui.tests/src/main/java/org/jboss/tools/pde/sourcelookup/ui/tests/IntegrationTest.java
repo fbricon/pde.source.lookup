@@ -47,125 +47,125 @@ import org.junit.Test;
 
 public class IntegrationTest {
 
-	private Path sourcesDirectory;
+  private Path sourcesDirectory;
 
-	@Before
-	public void setUp() throws Exception {
-		sourcesDirectory = Paths.get("target", "sources");
-		SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(sourcesDirectory);
-		deleteDirectory(sourcesDirectory);
-	}
+  @Before
+  public void setUp() throws Exception {
+    sourcesDirectory = Paths.get("target", "sources");
+    SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(sourcesDirectory);
+    deleteDirectory(sourcesDirectory);
+  }
 
-	private void deleteDirectory(java.nio.file.Path directory) throws IOException {
-		if (!Files.exists(directory)) {
-			return;
-		}
-		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
+  private void deleteDirectory(java.nio.file.Path directory) throws IOException {
+    if (!Files.exists(directory)) {
+      return;
+    }
+    Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+      @Override
+      public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        Files.delete(file);
+        return FileVisitResult.CONTINUE;
+      }
 
-			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				Files.delete(dir);
-				return FileVisitResult.CONTINUE;
-			}
+      @Override
+      public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        Files.delete(dir);
+        return FileVisitResult.CONTINUE;
+      }
 
-		});
-	}
+    });
+  }
 
-	@After
-	public void tearDown() throws Exception {
-		//reset sources directory
-		SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(null);
-	}
+  @After
+  public void tearDown() throws Exception {
+    //reset sources directory
+    SourceLookupPreferences.getInstance().setDownloadedSourcesDirectory(null);
+  }
 
-	@Test
-	public void basicSingleJarTest() throws Exception {
-		final String id = "org.foo.bar";
-		final String version = "1.0.0";
-		final String jarName = id + "_" + version + ".jar";
-		final String sourceJarName = id + ".source" + "_" + version + ".jar";
-		final String resourceDir = "/resources/";
-		final String sourceRepoRelPath = resourceDir + "valid-source-repo";
+  @Test
+  public void basicSingleJarTest() throws Exception {
+    final String id = "org.foo.bar";
+    final String version = "1.0.0";
+    final String jarName = id + "_" + version + ".jar";
+    final String sourceJarName = id + ".source" + "_" + version + ".jar";
+    final String resourceDir = "/resources/";
+    final String sourceRepoRelPath = resourceDir + "valid-source-repo";
 
-		IJavaProject jProject = createJavaProject("integration-test");
+    IJavaProject jProject = createJavaProject("integration-test");
 
-		// binary jar file location
-		String jarPath = FileLocator.toFileURL(getClass().getResource(resourceDir + jarName)).getPath();
-		IPath binJarPath = org.eclipse.core.runtime.Path.fromOSString(jarPath);
+    // binary jar file location
+    String jarPath = FileLocator.toFileURL(getClass().getResource(resourceDir + jarName)).getPath();
+    IPath binJarPath = org.eclipse.core.runtime.Path.fromOSString(jarPath);
 
-		// Add the binary jar to the classpath of the java project
-		addBinaries(jProject, binJarPath);
+    // Add the binary jar to the classpath of the java project
+    addBinaries(jProject, binJarPath);
 
-		// Set the default source attachment as the binary jar
-		// This is necessary to trigger our PDE source lookup
-		IPackageFragmentRoot pfr = jProject.getPackageFragmentRoot(jarPath);
-		pfr.attachSource(binJarPath, null, new NullProgressMonitor());
+    // Set the default source attachment as the binary jar
+    // This is necessary to trigger our PDE source lookup
+    IPackageFragmentRoot pfr = jProject.getPackageFragmentRoot(jarPath);
+    pfr.attachSource(binJarPath, null, new NullProgressMonitor());
 
-		// source jar artifact repository location
-		URI sourceLoc = getSourceRepoURL(sourceRepoRelPath);
+    // source jar artifact repository location
+    URI sourceLoc = getSourceRepoURL(sourceRepoRelPath);
 
-		// Inform the provisioning agent of the artifact repository containing
-		// the source bundle
-		addP2Repositories(getSourceRepoURL(resourceDir + "invalid-source-repo"), sourceLoc);
+    // Inform the provisioning agent of the artifact repository containing
+    // the source bundle
+    addP2Repositories(getSourceRepoURL(resourceDir + "invalid-source-repo"), sourceLoc);
 
-		// Simulate opening the classfile in the editor
-		// TODO: Could we ever get JavaUI.openInEditor working with Tycho ?
-		//		IJavaElement jElement = jProject.findType("org.foo.bar.Main");
-		//		JavaUI.openInEditor(jElement);
-		DownloadSourcesActionDelegate delegate = new DownloadSourcesActionDelegate();
-		delegate.selectionChanged(null, new StructuredSelection(jProject.getPackageFragmentRoot(jarPath)));
-		delegate.run(null);
+    // Simulate opening the classfile in the editor
+    // TODO: Could we ever get JavaUI.openInEditor working with Tycho ?
+    //		IJavaElement jElement = jProject.findType("org.foo.bar.Main");
+    //		JavaUI.openInEditor(jElement);
+    DownloadSourcesActionDelegate delegate = new DownloadSourcesActionDelegate();
+    delegate.selectionChanged(null, new StructuredSelection(jProject.getPackageFragmentRoot(jarPath)));
+    delegate.run(null);
 
-		// Expect to find the downloaded jar at this location
-		File downloadedSourceJarFile = sourcesDirectory.resolve(sourceJarName).toFile();
-		while (!downloadedSourceJarFile.exists()) {
-			Thread.sleep(1000);
-		}
-	}
+    // Expect to find the downloaded jar at this location
+    File downloadedSourceJarFile = sourcesDirectory.resolve(sourceJarName).toFile();
+    while (!downloadedSourceJarFile.exists()) {
+      Thread.sleep(1000);
+    }
+  }
 
-	/**
-	 * @param resourceDir
-	 * @param sourceLoc
-	 * @throws IOException
-	 */
-	private void addP2Repositories(URI... p2Repos) throws IOException {
-		ProvisioningUI pui = ProvisioningUI.getDefaultUI();
-		for (URI repo : p2Repos) {
-			pui.getRepositoryTracker().addRepository(repo, null, pui.getSession());
-		}
-	}
+  /**
+   * @param resourceDir
+   * @param sourceLoc
+   * @throws IOException
+   */
+  private void addP2Repositories(URI... p2Repos) throws IOException {
+    ProvisioningUI pui = ProvisioningUI.getDefaultUI();
+    for (URI repo : p2Repos) {
+      pui.getRepositoryTracker().addRepository(repo, null, pui.getSession());
+    }
+  }
 
-	private IJavaProject createJavaProject(String name) throws CoreException {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
-		// Create the project as a Java project
-		project.delete(true, null);
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
-		project.setDescription(description, null);
+  private IJavaProject createJavaProject(String name) throws CoreException {
+    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    IProject project = root.getProject(name);
+    // Create the project as a Java project
+    project.delete(true, null);
+    project.create(null);
+    project.open(null);
+    IProjectDescription description = project.getDescription();
+    description.setNatureIds(new String[] { JavaCore.NATURE_ID });
+    project.setDescription(description, null);
 
-		IJavaProject jProject = JavaCore.create(project);
-		return jProject;
-	}
+    IJavaProject jProject = JavaCore.create(project);
+    return jProject;
+  }
 
-	private void addBinaries(IJavaProject jProject, IPath... binJarPath) throws JavaModelException {
-		List<IClasspathEntry> newCPE = new ArrayList<>(Arrays.asList(jProject.getRawClasspath()));
-		for (IPath path : binJarPath) {
-			IClasspathEntry jarCPE = JavaCore.newLibraryEntry(path, null, null);
-			newCPE.add(jarCPE);
-		}
-		jProject.setRawClasspath(newCPE.toArray(new IClasspathEntry[0]), new NullProgressMonitor());
-	}
+  private void addBinaries(IJavaProject jProject, IPath... binJarPath) throws JavaModelException {
+    List<IClasspathEntry> newCPE = new ArrayList<>(Arrays.asList(jProject.getRawClasspath()));
+    for (IPath path : binJarPath) {
+      IClasspathEntry jarCPE = JavaCore.newLibraryEntry(path, null, null);
+      newCPE.add(jarCPE);
+    }
+    jProject.setRawClasspath(newCPE.toArray(new IClasspathEntry[0]), new NullProgressMonitor());
+  }
 
-	private URI getSourceRepoURL(final String relativePath) throws IOException {
-		String sourcePath = FileLocator.toFileURL(getClass().getResource(relativePath)).getPath();
-		return URI.create("file:" + sourcePath);
-	}
+  private URI getSourceRepoURL(final String relativePath) throws IOException {
+    String sourcePath = FileLocator.toFileURL(getClass().getResource(relativePath)).getPath();
+    return URI.create("file:" + sourcePath);
+  }
 
 }

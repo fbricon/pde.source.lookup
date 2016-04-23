@@ -15,23 +15,23 @@ import org.osgi.framework.BundleContext;
 
 public class CoreActivator implements BundleActivator {
 
-	public static final String ROOT_PLUGIN_ID = "org.jboss.tools.pde.sourcelookup";
-	
-	public static final String PLUGIN_ID = ROOT_PLUGIN_ID+".core";
+  public static final String ROOT_PLUGIN_ID = "org.jboss.tools.pde.sourcelookup";
 
-	private static CoreActivator instance;
-	
-	@Override
-	public void start(BundleContext context) throws Exception {
-		instance = this;
-	}
+  public static final String PLUGIN_ID = ROOT_PLUGIN_ID+".core";
 
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		instance = null;
-	}
+  private static CoreActivator instance;
 
-	public static CoreActivator getInstance() {
-		return instance;
-	}
+  @Override
+  public void start(BundleContext context) throws Exception {
+    instance = this;
+  }
+
+  @Override
+  public void stop(BundleContext context) throws Exception {
+    instance = null;
+  }
+
+  public static CoreActivator getInstance() {
+    return instance;
+  }
 }

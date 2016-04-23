@@ -20,22 +20,22 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class ProjectUtils {
 
-	private ProjectUtils() {
-	}
+  private ProjectUtils() {
+  }
 
-	public static boolean isPluginProject(IProject project) {
-		return hasNature(project, "org.eclipse.pde.PluginNature");
-	}
+  public static boolean isPluginProject(IProject project) {
+    return hasNature(project, "org.eclipse.pde.PluginNature");
+  }
 
-	public static boolean hasNature(IProject project, String natureId) {
-		if (project == null) {
-			return false;
-		}
-		try {
-			return project.hasNature(natureId);
-		} catch (CoreException O_o) {
-		}
-		return false;
-	}
+  public static boolean hasNature(IProject project, String natureId) {
+    if (project == null) {
+      return false;
+    }
+    try {
+      return project.hasNature(natureId);
+    } catch (CoreException O_o) {
+    }
+    return false;
+  }
 
 }

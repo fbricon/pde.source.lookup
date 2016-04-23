@@ -17,27 +17,27 @@ import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
-	private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
-			CoreActivator.PLUGIN_ID, "sources");
+  private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
+      CoreActivator.PLUGIN_ID, "sources");
 
-	private static final SourceLookupPreferences INSTANCE = new SourceLookupPreferences();
+  private static final SourceLookupPreferences INSTANCE = new SourceLookupPreferences();
 
-	private Path downloadedSourcesDirectory;
+  private Path downloadedSourcesDirectory;
 
-	private SourceLookupPreferences() {
-		downloadedSourcesDirectory = DEFAULT_SOURCES_DIRECTORY;
-	}
+  private SourceLookupPreferences() {
+    downloadedSourcesDirectory = DEFAULT_SOURCES_DIRECTORY;
+  }
 
-	public static SourceLookupPreferences getInstance() {
-		return INSTANCE;
-	}
+  public static SourceLookupPreferences getInstance() {
+    return INSTANCE;
+  }
 
-	public Path getDownloadedSourcesDirectory() {
-		return downloadedSourcesDirectory;
-	}
+  public Path getDownloadedSourcesDirectory() {
+    return downloadedSourcesDirectory;
+  }
 
-	// For testing purposes only
-	public void setDownloadedSourcesDirectory(Path sourcesDirectory) {
-		downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY : sourcesDirectory;
-	}
+  // For testing purposes only
+  public void setDownloadedSourcesDirectory(Path sourcesDirectory) {
+    downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY : sourcesDirectory;
+  }
 }

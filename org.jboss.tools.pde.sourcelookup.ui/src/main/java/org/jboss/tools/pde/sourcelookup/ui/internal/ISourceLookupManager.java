@@ -19,9 +19,9 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
  */
 public interface ISourceLookupManager {
 
-	/**
-	 * @param fragments
-	 */
-	void findSources(IPackageFragmentRoot... fragments);
+  /**
+   * @param fragments
+   */
+  void findSources(IPackageFragmentRoot... fragments);
 
 }

@@ -21,17 +21,17 @@ import org.jboss.tools.pde.sourcelookup.ui.internal.jobs.P2SourceDownloadJob;
  */
 public class P2SourceLookupManager implements ISourceLookupManager {
 
-	private P2SourceDownloadJob sourceLookupJob;
+  private P2SourceDownloadJob sourceLookupJob;
 
-	public P2SourceLookupManager(P2SourceDownloadJob sourceLookupJob) {
-		Assert.isNotNull(sourceLookupJob, "source lookup job can't be null");
-		this.sourceLookupJob = sourceLookupJob;
-	}
+  public P2SourceLookupManager(P2SourceDownloadJob sourceLookupJob) {
+    Assert.isNotNull(sourceLookupJob, "source lookup job can't be null");
+    this.sourceLookupJob = sourceLookupJob;
+  }
 
-	@Override
-	public void findSources(IPackageFragmentRoot...fragments) {
-		sourceLookupJob.queue(fragments);
-		sourceLookupJob.schedule();
-	}
+  @Override
+  public void findSources(IPackageFragmentRoot...fragments) {
+    sourceLookupJob.queue(fragments);
+    sourceLookupJob.schedule();
+  }
 
 }

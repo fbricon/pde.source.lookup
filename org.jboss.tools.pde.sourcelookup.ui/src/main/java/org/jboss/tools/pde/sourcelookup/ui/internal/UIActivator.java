@@ -17,28 +17,28 @@ import org.osgi.framework.BundleContext;
 
 public class UIActivator implements BundleActivator {
 
-	public static final String PLUGIN_ID =  CoreActivator.ROOT_PLUGIN_ID+".ui";
-	private static UIActivator instance;
-	private ISourceLookupManager sourceLookupManager;
+  public static final String PLUGIN_ID =  CoreActivator.ROOT_PLUGIN_ID+".ui";
+  private static UIActivator instance;
+  private ISourceLookupManager sourceLookupManager;
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		instance = this;
-		sourceLookupManager = new P2SourceLookupManager(new P2SourceDownloadJob());
-	}
+  @Override
+  public void start(BundleContext context) throws Exception {
+    instance = this;
+    sourceLookupManager = new P2SourceLookupManager(new P2SourceDownloadJob());
+  }
 
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		sourceLookupManager = null;
-		instance = null;
-	}
+  @Override
+  public void stop(BundleContext context) throws Exception {
+    sourceLookupManager = null;
+    instance = null;
+  }
 
 
-	public static UIActivator getInstance() {
-		return instance;
-	}
+  public static UIActivator getInstance() {
+    return instance;
+  }
 
-	public ISourceLookupManager getSourceLookupManager() {
-		return sourceLookupManager;
-	}
+  public ISourceLookupManager getSourceLookupManager() {
+    return sourceLookupManager;
+  }
 }
