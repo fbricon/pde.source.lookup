@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.jboss.tools.pde.sourcelookup.ui.internal.actions.DownloadSourcesActionDelegate;
@@ -89,27 +91,14 @@ public class IntegrationTest {
 		final String resourceDir = "/resources/";
 		final String sourceRepoRelPath = resourceDir + "valid-source-repo";
 
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject("integration-test");
-		// Create the project as a Java project
-		project.delete(true, null);
-		project.create(null);
-		project.open(null);
-		IProjectDescription description = project.getDescription();
-		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
-		project.setDescription(description, null);
-
-		IJavaProject jProject = JavaCore.create(project);
+		IJavaProject jProject = createJavaProject("integration-test");
 
 		// binary jar file location
 		String jarPath = FileLocator.toFileURL(getClass().getResource(resourceDir + jarName)).getPath();
 		IPath binJarPath = org.eclipse.core.runtime.Path.fromOSString(jarPath);
 
 		// Add the binary jar to the classpath of the java project
-		List<IClasspathEntry> newCPE = new ArrayList<>(Arrays.asList(jProject.getRawClasspath()));
-		IClasspathEntry jarCPE = JavaCore.newLibraryEntry(binJarPath, null, null);
-		newCPE.add(jarCPE);
-		jProject.setRawClasspath(newCPE.toArray(new IClasspathEntry[0]), new NullProgressMonitor());
+		addBinaries(jProject, binJarPath);
 
 		// Set the default source attachment as the binary jar
 		// This is necessary to trigger our PDE source lookup
@@ -121,9 +110,7 @@ public class IntegrationTest {
 
 		// Inform the provisioning agent of the artifact repository containing
 		// the source bundle
-		ProvisioningUI pui = ProvisioningUI.getDefaultUI();
-		pui.getRepositoryTracker().addRepository(sourceLoc, null, pui.getSession());
-		pui.getRepositoryTracker().addRepository(getSourceRepoURL(resourceDir+"invalid-source-repo" ), null, pui.getSession());
+		addP2Repositories(getSourceRepoURL(resourceDir + "invalid-source-repo"), sourceLoc);
 
 		// Simulate opening the classfile in the editor
 		// TODO: Could we ever get JavaUI.openInEditor working with Tycho ?
@@ -138,6 +125,42 @@ public class IntegrationTest {
 		while (!downloadedSourceJarFile.exists()) {
 			Thread.sleep(1000);
 		}
+	}
+
+	/**
+	 * @param resourceDir
+	 * @param sourceLoc
+	 * @throws IOException
+	 */
+	private void addP2Repositories(URI... p2Repos) throws IOException {
+		ProvisioningUI pui = ProvisioningUI.getDefaultUI();
+		for (URI repo : p2Repos) {
+			pui.getRepositoryTracker().addRepository(repo, null, pui.getSession());
+		}
+	}
+
+	private IJavaProject createJavaProject(String name) throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(name);
+		// Create the project as a Java project
+		project.delete(true, null);
+		project.create(null);
+		project.open(null);
+		IProjectDescription description = project.getDescription();
+		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
+		project.setDescription(description, null);
+
+		IJavaProject jProject = JavaCore.create(project);
+		return jProject;
+	}
+
+	private void addBinaries(IJavaProject jProject, IPath... binJarPath) throws JavaModelException {
+		List<IClasspathEntry> newCPE = new ArrayList<>(Arrays.asList(jProject.getRawClasspath()));
+		for (IPath path : binJarPath) {
+			IClasspathEntry jarCPE = JavaCore.newLibraryEntry(path, null, null);
+			newCPE.add(jarCPE);
+		}
+		jProject.setRawClasspath(newCPE.toArray(new IClasspathEntry[0]), new NullProgressMonitor());
 	}
 
 	private URI getSourceRepoURL(final String relativePath) throws IOException {

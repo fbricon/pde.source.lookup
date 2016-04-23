@@ -3,5 +3,9 @@
    <feature url="features/org.jboss.tools.pde.sourcelookup.feature_0.0.0.qualifier.jar" id="org.jboss.tools.pde.sourcelookup.feature" version="0.0.0">
       <category name="pde.source.lookup"/>
    </feature>
+   <feature url="features/org.jboss.tools.pde.sourcelookup.feature.source_0.0.0.qualifier.jar" id="org.jboss.tools.pde.sourcelookup.feature.source" version="0.0.0">
+      <category name="pde.source.lookup.sdk"/>
+   </feature>   
    <category-def name="pde.source.lookup" label="PDE Source Lookup"/>
+   <category-def name="pde.source.lookup.sdk" label="PDE Source Lookup (Developer Resources)"/>
 </site>
