@@ -1,6 +1,6 @@
 # PDE Source Lookup
 
-image:https://travis-ci.org/fbricon/pde.source.lookup.svg?branch=master["Build Status", link="https://travis-ci.org/fbricon/pde.source.lookup"]
+[![Build Status](https://travis-ci.org/fbricon/pde.source.lookup.svg?branch=master)](https://travis-ci.org/fbricon/pde.source.lookup)
 
 Proof of Concept to automatically fetch missing source bundles from enabled p2 repositories, when opening a bundle jar (similar to m2e).
 
