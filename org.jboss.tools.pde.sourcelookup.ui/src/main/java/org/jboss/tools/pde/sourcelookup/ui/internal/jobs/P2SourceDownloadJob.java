@@ -115,10 +115,11 @@ public class P2SourceDownloadJob extends Job {
 
     IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
-    Path cacheFolder = SourceLookupPreferences.getInstance().getDownloadedSourcesDirectory();
-    IPath localCache = getLocalSourcePathIfExists(cacheFolder, sourceKey);
-    if (localCache != null) {
-      return localCache;
+    for (Path cacheLocation : SourceLookupPreferences.getInstance().getCacheLocations()) {
+      IPath localCache = getLocalSourcePathIfExists(cacheLocation, sourceKey);
+      if (localCache != null) {
+        return localCache;
+      }
     }
 
     ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
@@ -128,8 +129,7 @@ public class P2SourceDownloadJob extends Job {
     Collections.sort(uris);// stupid trick to make eclipse.org repos being
     // searched almost first
 
-    // System.err.println("Searching sources for " +
-    // fragment.getElementName());
+    Path cacheFolder = SourceLookupPreferences.getInstance().getDownloadedSourcesDirectory();
     for (URI repo : uris) {
       if (monitor.isCanceled()) {
         return null;

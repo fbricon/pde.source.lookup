@@ -12,6 +12,8 @@ package org.jboss.tools.pde.sourcelookup.core.internal.preferences;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
@@ -19,6 +21,8 @@ public class SourceLookupPreferences {
 
   private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
       CoreActivator.PLUGIN_ID, "sources");
+
+  private static final Path P2_POOL_DIRECTORY = Paths.get(System.getProperty("user.home"), ".p2", "pool", "plugins");
 
   private static final SourceLookupPreferences INSTANCE = new SourceLookupPreferences();
 
@@ -39,5 +43,9 @@ public class SourceLookupPreferences {
   // For testing purposes only
   public void setDownloadedSourcesDirectory(Path sourcesDirectory) {
     downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY : sourcesDirectory;
+  }
+
+  public Collection<Path> getCacheLocations() {
+    return Arrays.asList(P2_POOL_DIRECTORY, downloadedSourcesDirectory);
   }
 }
