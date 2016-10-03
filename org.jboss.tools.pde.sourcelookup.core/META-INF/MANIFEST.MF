@@ -21,6 +21,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.metadata.repository
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.jboss.tools.pde.sourcelookup.ui",
- org.jboss.tools.pde.sourcelookup.core.internal.preferences;x-friends:="org.jboss.tools.pde.sourcelookup.ui",
- org.jboss.tools.pde.sourcelookup.core.internal.utils;x-friends:="org.jboss.tools.pde.sourcelookup.ui"
+Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
+ org.jboss.tools.pde.sourcelookup.core.internal.jobs;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
+ org.jboss.tools.pde.sourcelookup.core.internal.preferences;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
+ org.jboss.tools.pde.sourcelookup.core.internal.utils;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests"

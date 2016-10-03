@@ -11,15 +11,15 @@
 package org.jboss.tools.pde.sourcelookup.core.internal.utils;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Dictionary;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.osgi.util.ManifestElement;
-import org.osgi.framework.BundleException;
 
 @SuppressWarnings("restriction")
 public class BundleUtil {
@@ -51,7 +51,7 @@ public class BundleUtil {
             [0].getValue();
         version = manifest.get("Bundle-Version");
       }
-    } catch (IOException | BundleException | IllegalArgumentException e) {
+    } catch (Exception e) {
       return null;
     }
 
@@ -72,4 +72,17 @@ public class BundleUtil {
     return BundlesAction.createBundleArtifactKey(name + ".source", key.getVersion().toString());
   }
 
+  public static IPath getLocalSourcePathIfExists(java.nio.file.Path cacheFolder, IArtifactKey artifactKey) {
+    java.nio.file.Path sourcePath = getLocalSourcePath(cacheFolder, artifactKey);
+    return Files.exists(sourcePath) ? toIPath(sourcePath) : null;
+  }
+
+  public static java.nio.file.Path getLocalSourcePath(java.nio.file.Path cacheFolder, IArtifactKey artifactKey) {
+    java.nio.file.Path sourcePath = cacheFolder.resolve(artifactKey.getId() + "_" + artifactKey.getVersion() + ".jar");
+    return sourcePath;
+  }
+
+  private static IPath toIPath(java.nio.file.Path path) {
+    return org.eclipse.core.runtime.Path.fromOSString(path.toAbsolutePath().toString());
+  }
 }

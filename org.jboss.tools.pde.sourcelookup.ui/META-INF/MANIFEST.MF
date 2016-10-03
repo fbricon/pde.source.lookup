@@ -17,6 +17,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.core,
  org.eclipse.equinox.p2.repository,
  org.eclipse.equinox.p2.ui,
- org.eclipse.equinox.p2.operations
+ org.eclipse.equinox.p2.operations,
+ org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

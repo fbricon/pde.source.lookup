@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.jboss.tools.pde.sourcelookup.ui.internal.actions;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -94,7 +95,7 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
     }
   }
 
-  private void findSources(Set<IPackageFragmentRoot> queue) {
+  private void findSources(Collection<IPackageFragmentRoot> queue) {
     if (!queue.isEmpty()) {
       UIActivator.getInstance().getSourceLookupManager()
       .findSources(queue.toArray(new IPackageFragmentRoot[queue.size()]));

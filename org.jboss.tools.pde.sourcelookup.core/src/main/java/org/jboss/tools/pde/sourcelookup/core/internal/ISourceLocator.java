@@ -8,15 +8,19 @@
  * Contributors:
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.pde.sourcelookup.ui.internal.jobs;
 
-import org.jboss.tools.pde.sourcelookup.core.internal.CachedSourceLocator;
-import org.jboss.tools.pde.sourcelookup.core.internal.jobs.AbstractSourceDownloadJob;
+package org.jboss.tools.pde.sourcelookup.core.internal;
 
-public class P2SourceDownloadJob extends AbstractSourceDownloadJob {
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
 
-  public P2SourceDownloadJob() {
-    super("Plugin Sources Download", new CachedSourceLocator(), new P2SourceLocator());
-  }
+/**
+ * @author Fred Bricon
+ *
+ */
+public interface ISourceLocator {
+
+  IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor);
 
 }
