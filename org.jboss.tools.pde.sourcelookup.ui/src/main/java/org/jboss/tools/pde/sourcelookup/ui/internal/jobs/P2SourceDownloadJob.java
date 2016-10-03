@@ -54,8 +54,10 @@ public class P2SourceDownloadJob extends Job {
 
   private final Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
 
+  private List<String> blackList = Arrays.asList("org.eclipse.swt");
+
   public P2SourceDownloadJob() {
-    super("Plugin Source Download");
+    super("Plugin Sources Download");
   }
 
   @Override
@@ -77,7 +79,7 @@ public class P2SourceDownloadJob extends Job {
     }
     // schedule remaining requests that were added during this run
     synchronized (this.queue) {
-      if (!queue.isEmpty()) {
+      if (!queue.isEmpty() && !monitor.isCanceled()) {
         schedule();
       }
     }
@@ -112,7 +114,9 @@ public class P2SourceDownloadJob extends Job {
     }
     monitor.setTaskName(fragment.getElementName());
     IArtifactKey artifactKey = BundleUtil.getArtifactKey(fragment.getPath().toFile());
-
+    if (artifactKey == null || blackList.contains(artifactKey.getId())) {
+      return null;
+    }
     IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
     for (Path cacheLocation : SourceLookupPreferences.getInstance().getCacheLocations()) {

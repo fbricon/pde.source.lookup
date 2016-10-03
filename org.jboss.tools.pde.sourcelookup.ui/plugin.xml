@@ -15,8 +15,74 @@
               label="Download Bundle Sources" style="push"/>
       </editorContribution>
    </extension>
+ 
+    <extension point="org.eclipse.ui.commands">
+      <command
+            id="org.jboss.tools.pde.sourcelookup.ui.commands.downloadsources"
+            name="Download Bundle Sources"
+            defaultHandler="org.jboss.tools.pde.sourcelookup.ui.internal.actions.DownloadSourcesHandler"
+            >
+      </command>
+   </extension>
    
-      <extension
+   <extension point="org.eclipse.ui.commandImages">
+      <image commandId="org.jboss.tools.pde.sourcelookup.ui.commands.downloadsources" icon="icons/source.gif"></image>
+   </extension>
+   
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution 
+      	allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+        <command
+              commandId="org.jboss.tools.pde.sourcelookup.ui.commands.downloadsources"
+              label="Download Bundle Sources"
+              
+              mnemonic="D">
+           <visibleWhen checkEnabled="false">
+                 <with variable="selection">
+	      			<!--<or>-->
+	                  <and>
+	                    <count value="1" />
+	                    <iterate operator="and">
+	                       <adapt type="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer">
+	                       	  <test property="org.jboss.tools.pde.sourcelookup.isPluginContainer" />
+	                       </adapt>
+	 				    </iterate>
+					  </and>
+					  <!--
+					  <and>
+					  <iterate operator="and">
+	                       <instanceof type="org.eclipse.jdt.core.IPackageFragmentRoot">
+	                       <test property="org.jboss.tools.pde.sourcelookup.isFromPluginContainer" />
+	                       </instanceof>
+	 				   </iterate>
+	 				   </and>
+					</or>
+	 				   -->
+				</with>
+           </visibleWhen>
+        </command>
+      </menuContribution>
+   </extension>
+   
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            id="org.jboss.tools.pde.sourcelookup.ui.ClasspathContainerPropertyTester"
+            class="org.jboss.tools.pde.sourcelookup.ui.internal.actions.PluginSourceLookupPropertyTester"
+            namespace="org.jboss.tools.pde.sourcelookup"
+            properties="isPluginContainer"
+            type="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"/>
+            
+      <propertyTester
+            id="org.jboss.tools.pde.sourcelookup.ui.PackageRootFragmentPropertyTester"
+            class="org.jboss.tools.pde.sourcelookup.ui.internal.actions.PluginSourceLookupPropertyTester"
+            namespace="org.jboss.tools.pde.sourcelookup"
+            properties="isFromPluginContainer"
+            type="org.eclipse.jdt.core.IPackageFragmentRoot"/>
+   </extension>
+   
+   
+   <extension
          point="org.eclipse.ui.startup">
       <startup
             class="org.jboss.tools.pde.sourcelookup.ui.internal.Startup"></startup>
