@@ -12,13 +12,16 @@
 package org.jboss.tools.pde.sourcelookup.core.internal.utils;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -52,8 +55,7 @@ public class ClasspathUtils {
   public static boolean isPluginContainer(IClasspathEntry cpe) {
     if (cpe != null && cpe.getPath() != null) {
       String path = cpe.getPath().toString();
-      return "org.eclipse.pde.core.requiredPlugins".equals(path)
-          || "org.eclipse.pde.core.externalJavaSearch".equals(path);
+      return "org.eclipse.pde.core.requiredPlugins".equals(path);
     }
     return false;
   }
@@ -88,5 +90,25 @@ public class ClasspathUtils {
     } catch (CoreException e) {
       // ignore
     }
+  }
+
+  public static IPackageFragmentRoot[] getPluginContainerEntries(IProject project) {
+    if (!ProjectUtils.isPluginProject(project)) {
+      return new IPackageFragmentRoot[0];
+    }
+    IJavaProject javaProject = JavaCore.create(project);
+
+    IClasspathEntry pluginContainer = null;
+    try {
+      pluginContainer = Stream.of(javaProject.getRawClasspath()).filter(cpe -> isPluginContainer(cpe)).findFirst()
+          .orElse(null);
+    } catch (JavaModelException e) {
+      e.printStackTrace();
+    }
+    if (pluginContainer == null) {
+      return new IPackageFragmentRoot[0];
+    }
+    IPackageFragmentRoot[] pfr = javaProject.findPackageFragmentRoots(pluginContainer);
+    return pfr;
   }
 }

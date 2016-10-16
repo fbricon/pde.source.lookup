@@ -19,6 +19,8 @@ import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
+  public static final String REATTACH_SOURCES_ON_STARTUP_KEY = CoreActivator.PLUGIN_ID + ".reattachSourcesOnStartup";
+
   private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
       CoreActivator.PLUGIN_ID, "sources");
 

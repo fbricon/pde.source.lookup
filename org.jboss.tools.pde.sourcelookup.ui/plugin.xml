@@ -61,6 +61,14 @@
             type="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"/>
    </extension>
    <extension
+      point = "org.eclipse.ui.preferencePages">
+       <page id="org.jboss.tools.pde.sourcelookup.ui.preferences.PluginSourceLookupPreferencePage"
+	    class="org.jboss.tools.pde.sourcelookup.ui.internal.preferences.PluginSourceLookupPreferencePage"
+	        category="org.eclipse.pde.ui.MainPreferencePage"
+            name="Source lookup">
+       </page>
+   </extension>
+   <extension
          point="org.eclipse.ui.startup">
       <startup
             class="org.jboss.tools.pde.sourcelookup.ui.internal.Startup"></startup>

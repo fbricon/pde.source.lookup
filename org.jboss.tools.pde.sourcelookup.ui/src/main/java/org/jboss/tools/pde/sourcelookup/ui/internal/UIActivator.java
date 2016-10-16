@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.pde.sourcelookup.ui.internal;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 import org.jboss.tools.pde.sourcelookup.ui.internal.jobs.P2SourceDownloadJob;
 import org.osgi.framework.BundleActivator;
@@ -20,6 +23,7 @@ public class UIActivator implements BundleActivator {
   public static final String PLUGIN_ID =  CoreActivator.ROOT_PLUGIN_ID+".ui";
   private static UIActivator instance;
   private ISourceLookupManager sourceLookupManager;
+  private ScopedPreferenceStore preferenceStore;
 
   @Override
   public void start(BundleContext context) throws Exception {
@@ -40,5 +44,16 @@ public class UIActivator implements BundleActivator {
 
   public ISourceLookupManager getSourceLookupManager() {
     return sourceLookupManager;
+  }
+
+  /**
+   * @return
+   */
+  public IPreferenceStore getPreferenceStore() {
+    // Create the preference store lazily.
+    if (preferenceStore == null) {
+      preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE, CoreActivator.PLUGIN_ID);
+    }
+    return preferenceStore;
   }
 }

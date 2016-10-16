@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.jboss.tools.pde.sourcelookup.core.internal;
 
+import org.eclipse.core.runtime.Platform;
+import org.jboss.tools.pde.sourcelookup.core.internal.jobs.ReattachProjectBundleSourcesJob;
+import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -24,6 +27,11 @@ public class CoreActivator implements BundleActivator {
   @Override
   public void start(BundleContext context) throws Exception {
     instance = this;
+    boolean reattachSourcesOnStartup = Platform.getPreferencesService().getBoolean(PLUGIN_ID,
+        SourceLookupPreferences.REATTACH_SOURCES_ON_STARTUP_KEY, true, null);
+    if (reattachSourcesOnStartup) {
+      new ReattachProjectBundleSourcesJob().schedule(2_000);
+    }
   }
 
   @Override

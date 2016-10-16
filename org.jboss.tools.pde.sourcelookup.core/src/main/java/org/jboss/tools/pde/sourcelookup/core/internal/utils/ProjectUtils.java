@@ -24,7 +24,8 @@ public class ProjectUtils {
   }
 
   public static boolean isPluginProject(IProject project) {
-    return hasNature(project, "org.eclipse.pde.PluginNature");
+    return project != null && project.isAccessible() && hasNature(project, "org.eclipse.pde.PluginNature")
+        && hasNature(project, "org.eclipse.jdt.core.javanature");
   }
 
   public static boolean hasNature(IProject project, String natureId) {
