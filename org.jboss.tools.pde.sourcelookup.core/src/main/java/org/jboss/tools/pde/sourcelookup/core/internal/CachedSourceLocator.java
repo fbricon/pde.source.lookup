@@ -13,7 +13,14 @@ package org.jboss.tools.pde.sourcelookup.core.internal;
 
 import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePathIfExists;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,7 +33,9 @@ import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
  *
  * @author Fred Bricon
  */
-public class CachedSourceLocator implements ISourceLocator {
+public class CachedSourceLocator implements ISourceFileLocator {
+
+  private Path M2_REPO = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
   @Override
   public IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor) {
@@ -44,4 +53,64 @@ public class CachedSourceLocator implements ISourceLocator {
     return null;
   }
 
+  @Override
+  public IPath findSources(File jar, IProgressMonitor monitor) {
+    GAV gav = getGAV(jar);
+    if (gav != null) {
+      String fileName = gav.artifactId + "-" + gav.version + "-sources.jar";
+      Path sourcePath = M2_REPO
+          .resolve(Paths.get(gav.groupId.replace(".", "/"), gav.artifactId, gav.version, fileName));
+      if (Files.exists(sourcePath)) {
+        return new org.eclipse.core.runtime.Path(sourcePath.toString());
+      }
+    }
+    return null;
+  }
+
+  private GAV getGAV(File jar) {
+    if (jar == null || !jar.isFile() || !jar.canRead()) {
+      return null;
+    }
+    GAV artifact = null;
+    try (ZipFile zip = new ZipFile(jar)) {
+      String mavenDir = "META-INF/maven";
+      if (zip.getEntry(mavenDir) == null) {
+        return null;
+      }
+
+      Enumeration<? extends ZipEntry> zipEntries = zip.entries();
+      while (zipEntries.hasMoreElements()) {
+        ZipEntry zipEntry = zipEntries.nextElement();
+        if (zipEntry.getName().startsWith(mavenDir) && zipEntry.getName().endsWith("pom.properties")) {
+          if (artifact != null) {
+            // multiple values, which one to use?
+            return null;
+          }
+          Properties props = new Properties();
+          props.load(zip.getInputStream(zipEntry));
+          String groupId = props.getProperty("groupId");
+          String artifactId = props.getProperty("artifactId");
+          String version = props.getProperty("version");
+          if (groupId != null && artifactId != null && version != null) {
+            artifact = new GAV(groupId, artifactId, version);
+          }
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return artifact;
+  }
+
+  private static class GAV {
+    private String groupId;
+    private String artifactId;
+    private String version;
+
+    public GAV(String groupId, String artifactId, String version) {
+      this.groupId = groupId;
+      this.artifactId = artifactId;
+      this.version = version;
+    }
+  }
 }
