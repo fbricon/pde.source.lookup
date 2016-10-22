@@ -30,7 +30,7 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
-import org.jboss.tools.pde.sourcelookup.core.internal.ISourceLocator;
+import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
 import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
 
@@ -39,7 +39,7 @@ import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
  *
  * @author Fred Bricon
  */
-public class P2SourceLocator implements ISourceLocator {
+public class P2SourceLocator implements ISourceArtifactLocator {
 
   private List<String> blackList = Arrays.asList("org.eclipse.swt");
 

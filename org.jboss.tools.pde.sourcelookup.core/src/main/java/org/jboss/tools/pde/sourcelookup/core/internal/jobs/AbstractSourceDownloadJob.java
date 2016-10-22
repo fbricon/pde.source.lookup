@@ -29,7 +29,7 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.jboss.tools.pde.sourcelookup.core.internal.ISourceFileLocator;
-import org.jboss.tools.pde.sourcelookup.core.internal.ISourceLocator;
+import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils;
 
@@ -38,9 +38,9 @@ public abstract class AbstractSourceDownloadJob extends Job {
 
   private final Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
 
-  private List<ISourceLocator> sourceLocators;
+  private List<ISourceArtifactLocator> sourceLocators;
 
-  public AbstractSourceDownloadJob(String name, ISourceLocator... sourceLocators) {
+  public AbstractSourceDownloadJob(String name, ISourceArtifactLocator... sourceLocators) {
     super(name);
     this.sourceLocators = sourceLocators == null ? Collections.emptyList() : Arrays.asList(sourceLocators);
   }
@@ -103,7 +103,7 @@ public abstract class AbstractSourceDownloadJob extends Job {
     return path;
   }
 
-  private IPath findSource(ISourceLocator locator, File jar, IArtifactKey artifactKey, IProgressMonitor monitor) {
+  private IPath findSource(ISourceArtifactLocator locator, File jar, IArtifactKey artifactKey, IProgressMonitor monitor) {
     IPath path = locator.findSources(artifactKey, monitor);
     if (path == null && locator instanceof ISourceFileLocator) {
       path = ((ISourceFileLocator) locator).findSources(jar, monitor);

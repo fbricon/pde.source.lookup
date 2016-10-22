@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Fred Bricon
  *
  */
-public interface ISourceFileLocator extends ISourceLocator {
+public interface ISourceFileLocator {
 
   IPath findSources(File file, IProgressMonitor monitor);
 

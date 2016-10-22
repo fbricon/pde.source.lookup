@@ -19,7 +19,7 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
  * @author Fred Bricon
  *
  */
-public interface ISourceLocator {
+public interface ISourceArtifactLocator {
 
   IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor);
 

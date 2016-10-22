@@ -33,7 +33,7 @@ import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
  *
  * @author Fred Bricon
  */
-public class CachedSourceLocator implements ISourceFileLocator {
+public class CachedSourceLocator implements ISourceArtifactLocator, ISourceFileLocator {
 
   private Path M2_REPO = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
