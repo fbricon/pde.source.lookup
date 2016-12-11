@@ -5,9 +5,9 @@
 Proof of Concept to automatically fetch missing source bundles from enabled p2 repositories, when opening a bundle jar (similar to m2e).
 It's also possible to fetch all sources from the `Plug-in Dependencies` classpath container, with a right-click and selecting `Download Bundle Sources`. 
 
-Sources are cached to `~/.eclipse/org.jboss.tools.pde.sourcelookup.core/sources`.
+Sources are cached to `~/.eclipse/org.jboss.tools.pde.sourcelookup.core/sources`. That folder can be changed in `Preferences` > `Plug-in Development` > `Source Lookup`.
 
-Because the `Plug-in Dependencies` classpath container doesn't keep new attached sources on workspace restart, 
+Because the `Plug-in Dependencies` classpath container [doesn't keep new attached sources on workspace restart](https://bugs.eclipse.org/bugs/show_bug.cgi?id=492204), 
 the PDE Source Lookup plugin automatically reattaches thoses sources upon restart.
 This behavior can be disabled in `Preferences` > `Plug-in Development` > `Source Lookup`.
 

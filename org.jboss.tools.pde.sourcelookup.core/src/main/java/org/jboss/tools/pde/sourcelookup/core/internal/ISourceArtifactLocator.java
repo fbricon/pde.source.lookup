@@ -11,9 +11,10 @@
 
 package org.jboss.tools.pde.sourcelookup.core.internal;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.equinox.p2.metadata.IArtifactKey;
 
 /**
  * @author Fred Bricon
@@ -21,6 +22,6 @@ import org.eclipse.equinox.p2.metadata.IArtifactKey;
  */
 public interface ISourceArtifactLocator {
 
-  IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor);
+  IPath findSources(File jar, IProgressMonitor monitor);
 
 }

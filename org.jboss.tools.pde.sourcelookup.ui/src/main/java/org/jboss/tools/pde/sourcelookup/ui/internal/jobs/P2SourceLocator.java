@@ -44,12 +44,14 @@ public class P2SourceLocator implements ISourceArtifactLocator {
   private List<String> blackList = Arrays.asList("org.eclipse.swt");
 
   @Override
-  public IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor) {
-
+  public IPath findSources(File jar, IProgressMonitor monitor) {
+    if (!BundleUtil.isBundle(jar)) {
+      return null;
+    }
+    IArtifactKey artifactKey = BundleUtil.getArtifactKey(jar);
     if (artifactKey == null || blackList.contains(artifactKey.getId())) {
       return null;
     }
-
     IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
     ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
@@ -69,6 +71,7 @@ public class P2SourceLocator implements ISourceArtifactLocator {
         if (!artifactRepo.contains(sourceKey)) {
           continue;
         }
+
         IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
         if (results.length > 0) {
           return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);

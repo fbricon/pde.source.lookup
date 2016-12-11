@@ -25,12 +25,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
-import org.jboss.tools.pde.sourcelookup.core.internal.ISourceFileLocator;
 import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
-import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils;
 
 @SuppressWarnings("restriction")
@@ -73,20 +70,17 @@ public abstract class AbstractSourceDownloadJob extends Job {
 
   private void findAndAttachSources(IPackageFragmentRoot fragment, IProgressMonitor monitor) {
     monitor.setTaskName("Searching sources for "+fragment.getElementName());
-    // Check if fragment is a bundle, else bail
     try {
+      if (ClasspathUtils.hasSources(fragment)) {
+        return;
+      }
       IPath path = findSources(fragment, monitor);
       if (path != null) {
-        // System.err.println("Attaching " + path);
         ClasspathUtils.attachSource(fragment, path, monitor);
       }
     } catch (CoreException e) {
       e.printStackTrace();
     }
-  }
-
-  private boolean isValid(IPackageFragmentRoot fragment) {
-    return BundleUtil.isBundle(fragment.getPath().toFile());
   }
 
   protected IPath findSources(IPackageFragmentRoot fragment, IProgressMonitor monitor)
@@ -97,17 +91,14 @@ public abstract class AbstractSourceDownloadJob extends Job {
     monitor.setTaskName(fragment.getElementName());
 
     File jar = fragment.getPath().toFile();
-    IArtifactKey artifactKey = BundleUtil.getArtifactKey(jar);
-    IPath path = sourceLocators.stream().map(sl -> findSource(sl, jar, artifactKey, monitor)).filter(p -> p != null)
+    IPath path = sourceLocators.stream().map(sl -> findSource(sl, jar, monitor)).filter(p -> p != null)
         .findFirst().orElse(null);
+
     return path;
   }
 
-  private IPath findSource(ISourceArtifactLocator locator, File jar, IArtifactKey artifactKey, IProgressMonitor monitor) {
-    IPath path = locator.findSources(artifactKey, monitor);
-    if (path == null && locator instanceof ISourceFileLocator) {
-      path = ((ISourceFileLocator) locator).findSources(jar, monitor);
-    }
+  private IPath findSource(ISourceArtifactLocator locator, File jar, IProgressMonitor monitor) {
+    IPath path = locator.findSources(jar, monitor);
     return path;
   }
 

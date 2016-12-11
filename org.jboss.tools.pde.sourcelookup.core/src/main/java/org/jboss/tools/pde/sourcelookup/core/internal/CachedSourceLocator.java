@@ -24,6 +24,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
@@ -33,18 +34,33 @@ import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
  *
  * @author Fred Bricon
  */
-public class CachedSourceLocator implements ISourceArtifactLocator, ISourceFileLocator {
+public class CachedSourceLocator implements ISourceArtifactLocator {
 
   private Path M2_REPO = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
   @Override
+  public IPath findSources(File jar, IProgressMonitor monitor) {
+    IArtifactKey artifactKey = BundleUtil.getArtifactKey(jar);
+    IPath sourcePath = findSources(artifactKey, monitor);
+    if (sourcePath == null) {
+      sourcePath = findSourcesInMavenRepo(jar, monitor);
+    }
+    return sourcePath;
+  }
+
   public IPath findSources(IArtifactKey artifactKey, IProgressMonitor monitor) {
     if (artifactKey == null) {
       return null;
     }
+    if (monitor == null) {
+      monitor = new NullProgressMonitor();
+    }
     IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
     for (Path cacheLocation : SourceLookupPreferences.getInstance().getCacheLocations()) {
+      if (monitor.isCanceled()) {
+        break;
+      }
       IPath localCache = getLocalSourcePathIfExists(cacheLocation, sourceKey);
       if (localCache != null) {
         return localCache;
@@ -53,8 +69,7 @@ public class CachedSourceLocator implements ISourceArtifactLocator, ISourceFileL
     return null;
   }
 
-  @Override
-  public IPath findSources(File jar, IProgressMonitor monitor) {
+  public IPath findSourcesInMavenRepo(File jar, IProgressMonitor monitor) {
     GAV gav = getGAV(jar);
     if (gav != null) {
       String fileName = gav.artifactId + "-" + gav.version + "-sources.jar";

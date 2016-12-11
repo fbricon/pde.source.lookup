@@ -11,6 +11,8 @@
 
 package org.jboss.tools.pde.sourcelookup.core.internal.utils;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -66,6 +68,21 @@ public class ClasspathUtils {
     } catch (JavaModelException e) {
       return false;
     }
+  }
+
+  public static boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
+    if (fragment == null || fragment.getSourceAttachmentPath() == null) {
+      return false;
+    }
+    IPath filePath = fragment.getPath();
+    IPath sourcePath = fragment.getSourceAttachmentPath();
+    if (isBinaryFragment(fragment)) {
+      if (!Files.isRegularFile(Paths.get(sourcePath.toOSString()))) {
+        return false;
+      }
+      return !Objects.equals(sourcePath, filePath);
+    }
+    return true;
   }
 
   public static void attachSource(final IPackageFragmentRoot fragment, final IPath newSourcePath,

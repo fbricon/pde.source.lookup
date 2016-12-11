@@ -10,14 +10,14 @@
  ******************************************************************************/
 package org.jboss.tools.pde.sourcelookup.ui.internal.actions;
 
+import static org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils.hasSources;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
@@ -112,12 +112,6 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
     } catch (JavaModelException e) {
       return false;
     }
-  }
-
-  private boolean hasSources(IPackageFragmentRoot fragment) throws CoreException {
-    IPath filePath = fragment.getPath();
-    IPath sourcePath = fragment.getSourceAttachmentPath();
-    return sourcePath != null && !Objects.equals(sourcePath, filePath);
   }
 
 }

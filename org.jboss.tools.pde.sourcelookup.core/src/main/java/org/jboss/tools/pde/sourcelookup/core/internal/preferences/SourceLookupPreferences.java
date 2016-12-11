@@ -15,23 +15,25 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
   public static final String REATTACH_SOURCES_ON_STARTUP_KEY = CoreActivator.PLUGIN_ID + ".reattachSourcesOnStartup";
 
-  private static final Path DEFAULT_SOURCES_DIRECTORY = Paths.get(System.getProperty("user.home"), ".eclipse",
-      CoreActivator.PLUGIN_ID, "sources");
+  public static final String DEFAULT_SOURCES_DIRECTORY_KEY = CoreActivator.PLUGIN_ID + ".defaultSourceDirectory";
+
+  public static final String DEFAULT_SOURCES_DIRECTORY = Paths
+      .get(System.getProperty("user.home"), ".eclipse", CoreActivator.PLUGIN_ID, "sources").toString();
 
   private static final Path P2_POOL_DIRECTORY = Paths.get(System.getProperty("user.home"), ".p2", "pool", "plugins");
 
   private static final SourceLookupPreferences INSTANCE = new SourceLookupPreferences();
 
-  private Path downloadedSourcesDirectory;
-
   private SourceLookupPreferences() {
-    downloadedSourcesDirectory = DEFAULT_SOURCES_DIRECTORY;
   }
 
   public static SourceLookupPreferences getInstance() {
@@ -39,15 +41,23 @@ public class SourceLookupPreferences {
   }
 
   public Path getDownloadedSourcesDirectory() {
-    return downloadedSourcesDirectory;
+    String path = Platform.getPreferencesService().getString(CoreActivator.PLUGIN_ID,
+        SourceLookupPreferences.DEFAULT_SOURCES_DIRECTORY_KEY, DEFAULT_SOURCES_DIRECTORY, null);
+    return Paths.get(path);
   }
 
   // For testing purposes only
   public void setDownloadedSourcesDirectory(Path sourcesDirectory) {
-    downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY : sourcesDirectory;
+    String downloadedSourcesDirectory = (sourcesDirectory == null) ? DEFAULT_SOURCES_DIRECTORY
+        : sourcesDirectory.toString();
+    getPreferences().put(DEFAULT_SOURCES_DIRECTORY_KEY, downloadedSourcesDirectory);
+  }
+
+  IEclipsePreferences getPreferences() {
+    return InstanceScope.INSTANCE.getNode(CoreActivator.PLUGIN_ID);
   }
 
   public Collection<Path> getCacheLocations() {
-    return Arrays.asList(P2_POOL_DIRECTORY, downloadedSourcesDirectory);
+    return Arrays.asList(P2_POOL_DIRECTORY, getDownloadedSourcesDirectory());
   }
 }
