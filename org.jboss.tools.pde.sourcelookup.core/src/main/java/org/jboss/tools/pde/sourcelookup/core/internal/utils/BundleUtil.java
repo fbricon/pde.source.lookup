@@ -16,7 +16,6 @@ import java.util.Dictionary;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.osgi.util.ManifestElement;
@@ -33,14 +32,9 @@ public class BundleUtil {
   }
 
   public static IArtifactKey getArtifactKey(File file) {
-    if (file == null || !file.isFile()) {
+    if (file == null || !file.exists()) {
       return null;
     }
-    String extension = new Path(file.getName()).getFileExtension();
-    if (!"jar".equals(extension)) {
-      return null;
-    }
-
     String id = null;
     String version = null;
     try {

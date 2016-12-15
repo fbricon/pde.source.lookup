@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jdt.internal.core.JarPackageFragmentRoot;
 import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils;
 
@@ -85,9 +84,6 @@ public abstract class AbstractSourceDownloadJob extends Job {
 
   protected IPath findSources(IPackageFragmentRoot fragment, IProgressMonitor monitor)
       throws CoreException {
-    if (!(fragment instanceof JarPackageFragmentRoot)) {
-      return null;
-    }
     monitor.setTaskName(fragment.getElementName());
 
     File jar = fragment.getPath().toFile();
