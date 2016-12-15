@@ -14,10 +14,10 @@ package org.jboss.tools.pde.sourcelookup.core.internal;
 import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePathIfExists;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -75,7 +75,17 @@ public class CachedSourceLocator implements ISourceArtifactLocator {
       String fileName = gav.artifactId + "-" + gav.version + "-sources.jar";
       Path sourcePath = M2_REPO
           .resolve(Paths.get(gav.groupId.replace(".", "/"), gav.artifactId, gav.version, fileName));
-      if (Files.exists(sourcePath)) {
+
+      File sourceJar = sourcePath.toFile();
+      if (sourceJar.exists() && sourceJar.lastModified() >= jar.lastModified()) {
+        IArtifactKey ak = BundleUtil.getArtifactKey(jar);
+        if (ak != null) {
+          // if snapshot bundle is found, ensure this is the exact version
+          IArtifactKey sak = BundleUtil.getArtifactKey(sourceJar);
+          if (sak == null || !Objects.equals(sak.getVersion(), ak.getVersion())) {
+            return null;
+          }
+        }
         return new org.eclipse.core.runtime.Path(sourcePath.toString());
       }
     }
