@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
@@ -66,19 +67,24 @@ public class P2SourceLocator implements ISourceArtifactLocator {
       if (monitor.isCanceled()) {
         return null;
       }
+      IArtifactRepository artifactRepo = null;
       try {
-        IArtifactRepository artifactRepo = provisioningUI.loadArtifactRepository(repo, false, monitor);
-        if (!artifactRepo.contains(sourceKey)) {
-          continue;
-        }
+        artifactRepo = provisioningUI.loadArtifactRepository(repo, false, monitor);
+      } catch (ProvisionException ignored) {
+        ignored.printStackTrace();
+        // local urls seem to fail
+      }
+      if (artifactRepo == null || !artifactRepo.contains(sourceKey)) {
+        continue;
+      }
 
-        IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
-        if (results.length > 0) {
+      IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
+      if (results.length > 0) {
+        try {
           return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);
+        } catch (Exception e) {
+          e.printStackTrace();
         }
-      } catch (Exception e) {
-        e.printStackTrace();
-        return null;
       }
     }
     return null;
