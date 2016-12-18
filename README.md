@@ -17,7 +17,7 @@ This behavior can be disabled in `Preferences` > `Plug-in Development` > `Source
 - In Eclipse, either:
   - go to `Help` > `Eclipse Marketplace…` to search PDE Source Lookup from the [Eclipse Marketplace](https://marketplace.eclipse.org/content/pde-source-lookup)
   - go to `Help` > `Install New Software...` and add one of these p2 repositories:
-      - Stable: https://dl.bintray.com/fbricon/poc/pde.source.lookup/0.0.3.201610162205
+      - Stable: https://dl.bintray.com/fbricon/poc/pde.source.lookup/0.0.4.201612181944
       - CI: http://download.jboss.org/jbosstools/builds/staging/pde.source.lookup/all/repo/
 
 
