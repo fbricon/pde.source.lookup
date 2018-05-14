@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDE Source Lookup Core
 Bundle-SymbolicName: org.jboss.tools.pde.sourcelookup.core;singleton:=true
-Bundle-Version: 0.0.4.qualifier
+Bundle-Version: 0.0.5.qualifier
 Bundle-Activator: org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator
 Bundle-Vendor: Red Hat, Inc.
 Require-Bundle: org.eclipse.core.runtime,

@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.jboss.tools.pde.sourcelookup</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>org.jboss.tools.pde.sourcelookup.ui.tests</artifactId>
