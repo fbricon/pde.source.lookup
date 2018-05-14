@@ -24,7 +24,7 @@
   <packaging>pom</packaging>
   <inceptionYear>2016</inceptionYear>
   <properties>
-    <tycho-version>0.26.0</tycho-version>
+    <tycho-version>1.1.0-SNAPSHOT</tycho-version>
     <tycho-extras-version>${tycho-version}</tycho-extras-version>
     <tycho.testArgLine>-Xmx800m -noverify ${tycho.test.platformArgs}</tycho.testArgLine>
     <tycho.test.platformArgs></tycho.test.platformArgs>
@@ -53,6 +53,12 @@
       <url>http://download.eclipse.org/releases/mars</url>
     </repository>
   </repositories>
+	<pluginRepositories>
+	   <pluginRepository>
+	     <id>tycho-snapshots</id>
+	     <url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
+	   </pluginRepository>
+	</pluginRepositories>
 
   <build>
     <plugins>
@@ -100,13 +106,6 @@
               to finish -->
             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           </configuration>
-        </plugin>
-
-        <!-- important for self-hosting -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
         </plugin>
 
         <plugin>
@@ -234,7 +233,6 @@
           </plugin>
         </plugins>
       </build>
-
     </profile>
   </profiles>
 </project>
