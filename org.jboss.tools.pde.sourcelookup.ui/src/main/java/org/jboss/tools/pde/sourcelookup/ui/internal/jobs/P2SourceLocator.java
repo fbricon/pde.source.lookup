@@ -12,7 +12,7 @@
 package org.jboss.tools.pde.sourcelookup.ui.internal.jobs;
 
 import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePath;
-import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePathIfExists;
+import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalBundleSourcePathIfExists;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -101,7 +101,7 @@ public class P2SourceLocator implements ISourceArtifactLocator {
         artifactRepo.getArtifact(artifactDescriptor, stream, monitor);
       }
     }
-    return getLocalSourcePathIfExists(cacheFolder, artifactKey);
+    return getLocalBundleSourcePathIfExists(cacheFolder, artifactKey);
   }
 
 }

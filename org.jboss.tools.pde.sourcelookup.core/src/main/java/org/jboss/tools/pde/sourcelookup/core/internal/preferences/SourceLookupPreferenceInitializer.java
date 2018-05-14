@@ -24,6 +24,7 @@ public class SourceLookupPreferenceInitializer extends AbstractPreferenceInitial
   @Override
   public void initializeDefaultPreferences() {
     IEclipsePreferences store = DefaultScope.INSTANCE.getNode(CoreActivator.PLUGIN_ID);
+    store.putBoolean(SourceLookupPreferences.ENABLED_KEY, true);
     store.putBoolean(SourceLookupPreferences.REATTACH_SOURCES_ON_STARTUP_KEY, true);
     store.put(SourceLookupPreferences.DEFAULT_SOURCES_DIRECTORY_KEY, SourceLookupPreferences.DEFAULT_SOURCES_DIRECTORY);
   }

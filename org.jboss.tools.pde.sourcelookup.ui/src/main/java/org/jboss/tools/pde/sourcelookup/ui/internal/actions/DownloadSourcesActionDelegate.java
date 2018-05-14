@@ -18,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaModelException;
@@ -29,6 +30,8 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
+import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
+import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator;
 
 @SuppressWarnings("restriction")
@@ -41,6 +44,12 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
     if (selection == null || selection.isEmpty()) {
       return;
     }
+    boolean isAutomaticDiscoveryEnabled = Platform.getPreferencesService().getBoolean(CoreActivator.PLUGIN_ID,
+        SourceLookupPreferences.ENABLED_KEY, true, null);
+    if (!isAutomaticDiscoveryEnabled) {
+      return;
+    }
+
     Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
     for(Iterator<?> it = selection.iterator(); it.hasNext();) {
       Object element = it.next();

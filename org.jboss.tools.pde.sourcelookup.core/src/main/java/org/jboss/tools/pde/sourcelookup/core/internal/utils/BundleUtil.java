@@ -66,7 +66,7 @@ public class BundleUtil {
     return BundlesAction.createBundleArtifactKey(name + ".source", key.getVersion().toString());
   }
 
-  public static IPath getLocalSourcePathIfExists(java.nio.file.Path cacheFolder, IArtifactKey artifactKey) {
+  public static IPath getLocalBundleSourcePathIfExists(java.nio.file.Path cacheFolder, IArtifactKey artifactKey) {
     java.nio.file.Path sourcePath = getLocalSourcePath(cacheFolder, artifactKey);
     return Files.exists(sourcePath) ? toIPath(sourcePath) : null;
   }

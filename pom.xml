@@ -15,6 +15,7 @@
     <groupId>org.sonatype.forge</groupId>
     <artifactId>forge-parent</artifactId>
     <version>10</version>
+    <relativePath />
   </parent>
 
   <groupId>org.jboss.tools.pde.sourcelookup</groupId>
@@ -24,7 +25,7 @@
   <packaging>pom</packaging>
   <inceptionYear>2016</inceptionYear>
   <properties>
-    <tycho-version>1.1.0-SNAPSHOT</tycho-version>
+    <tycho-version>1.2.0-SNAPSHOT</tycho-version>
     <tycho-extras-version>${tycho-version}</tycho-extras-version>
     <tycho.testArgLine>-Xmx800m -noverify ${tycho.test.platformArgs}</tycho.testArgLine>
     <tycho.test.platformArgs></tycho.test.platformArgs>

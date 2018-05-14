@@ -22,6 +22,8 @@ import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 
 public class SourceLookupPreferences {
 
+  public static final String ENABLED_KEY = CoreActivator.PLUGIN_ID + ".enabled";
+
   public static final String REATTACH_SOURCES_ON_STARTUP_KEY = CoreActivator.PLUGIN_ID + ".reattachSourcesOnStartup";
 
   public static final String DEFAULT_SOURCES_DIRECTORY_KEY = CoreActivator.PLUGIN_ID + ".defaultSourceDirectory";

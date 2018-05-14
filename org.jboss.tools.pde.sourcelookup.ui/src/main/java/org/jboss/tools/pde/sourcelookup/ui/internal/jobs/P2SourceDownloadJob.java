@@ -11,12 +11,13 @@
 package org.jboss.tools.pde.sourcelookup.ui.internal.jobs;
 
 import org.jboss.tools.pde.sourcelookup.core.internal.CachedSourceLocator;
+import org.jboss.tools.pde.sourcelookup.core.internal.MavenSourceLocatorWrapper;
 import org.jboss.tools.pde.sourcelookup.core.internal.jobs.AbstractSourceDownloadJob;
 
 public class P2SourceDownloadJob extends AbstractSourceDownloadJob {
 
   public P2SourceDownloadJob() {
-    super("Plugin Sources Download", new CachedSourceLocator(), new P2SourceLocator());
+    super("Plugin Sources Download", new CachedSourceLocator(), new MavenSourceLocatorWrapper(), new P2SourceLocator());
   }
 
 }
