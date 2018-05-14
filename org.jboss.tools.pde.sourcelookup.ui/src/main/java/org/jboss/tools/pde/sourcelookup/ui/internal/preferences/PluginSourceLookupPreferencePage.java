@@ -41,7 +41,7 @@ public class PluginSourceLookupPreferencePage extends FieldEditorPreferencePage 
   @Override
   protected void createFieldEditors() {
     BooleanFieldEditor reattachSourceOnStartup = new BooleanFieldEditor(
-        SourceLookupPreferences.REATTACH_SOURCES_ON_STARTUP_KEY, "Re-Attach bundle sources on workbench startup",
+        SourceLookupPreferences.REATTACH_SOURCES_ON_STARTUP_KEY, "Re-attach bundle sources on workbench startup",
         getFieldEditorParent());
     addField(reattachSourceOnStartup);
 

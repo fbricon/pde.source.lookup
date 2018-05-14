@@ -85,10 +85,15 @@ public abstract class AbstractSourceDownloadJob extends Job {
   protected IPath findSources(IPackageFragmentRoot fragment, IProgressMonitor monitor)
       throws CoreException {
     monitor.setTaskName(fragment.getElementName());
-
-    File jar = fragment.getPath().toFile();
-    IPath path = sourceLocators.stream().map(sl -> findSource(sl, jar, monitor)).filter(p -> p != null)
-        .findFirst().orElse(null);
+    IPath path = null;
+    try {
+      File jar = fragment.getResource() == null ? fragment.getPath().toFile()
+          : fragment.getResource().getRawLocation().toFile();
+      path = sourceLocators.stream().map(sl -> findSource(sl, jar, monitor)).filter(p -> p != null).findFirst()
+          .orElse(null);
+    } catch (Exception e) {
+      System.err.println("can't find sources for " + fragment.getPath() + ": " + e.getMessage());
+    }
 
     return path;
   }

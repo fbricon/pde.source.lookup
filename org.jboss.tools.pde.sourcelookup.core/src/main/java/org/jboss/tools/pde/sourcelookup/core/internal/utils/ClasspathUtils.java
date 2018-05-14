@@ -74,9 +74,9 @@ public class ClasspathUtils {
     if (fragment == null || fragment.getSourceAttachmentPath() == null) {
       return false;
     }
-    IPath filePath = fragment.getPath();
-    IPath sourcePath = fragment.getSourceAttachmentPath();
     if (isBinaryFragment(fragment)) {
+      IPath filePath = fragment.getPath();
+      IPath sourcePath = fragment.getSourceAttachmentPath();
       if (!Files.isRegularFile(Paths.get(sourcePath.toOSString()))) {
         return false;
       }

@@ -23,3 +23,6 @@ Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.j
  org.jboss.tools.pde.sourcelookup.core.internal.jobs;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
  org.jboss.tools.pde.sourcelookup.core.internal.preferences;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
  org.jboss.tools.pde.sourcelookup.core.internal.utils;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests"
+Import-Package: com.google.common.hash;version="15.0.0",
+ com.google.common.io;version="15.0.0",
+ com.google.gson
