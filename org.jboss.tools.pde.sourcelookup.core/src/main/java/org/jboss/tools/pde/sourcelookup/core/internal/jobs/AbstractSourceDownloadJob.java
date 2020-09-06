@@ -26,10 +26,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils;
 
-@SuppressWarnings("restriction")
 public abstract class AbstractSourceDownloadJob extends Job {
 
   private final Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
@@ -92,7 +92,7 @@ public abstract class AbstractSourceDownloadJob extends Job {
       path = sourceLocators.stream().map(sl -> findSource(sl, jar, monitor)).filter(p -> p != null).findFirst()
           .orElse(null);
     } catch (Exception e) {
-      System.err.println("can't find sources for " + fragment.getPath() + ": " + e.getMessage());
+      CoreActivator.log("can't find sources for " + fragment.getPath() + ": " + e.getMessage());
     }
 
     return path;

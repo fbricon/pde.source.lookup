@@ -133,6 +133,9 @@ public class IntegrationTest {
    * @throws IOException
    */
   private void addP2Repositories(URI... p2Repos) throws IOException {
+    // XXX When using ProvisionManager instead of ProvisioningUI,
+    // pui.getRepositoryTracker() returns null,
+    // something mustn't be initialized properly
     ProvisioningUI pui = ProvisioningUI.getDefaultUI();
     for (URI repo : p2Repos) {
       pui.getRepositoryTracker().addRepository(repo, null, pui.getSession());

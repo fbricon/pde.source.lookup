@@ -9,10 +9,10 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 
-package org.jboss.tools.pde.sourcelookup.ui.internal.jobs;
+package org.jboss.tools.pde.sourcelookup.core.internal.p2;
 
-import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePath;
 import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalBundleSourcePathIfExists;
+import static org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil.getLocalSourcePath;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,8 +30,9 @@ import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
-import org.eclipse.equinox.p2.ui.ProvisioningUI;
+import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
+import org.jboss.tools.pde.sourcelookup.core.internal.ProvisioningManager;
 import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.BundleUtil;
 
@@ -55,10 +56,10 @@ public class P2SourceLocator implements ISourceArtifactLocator {
     }
     IArtifactKey sourceKey = BundleUtil.toSourceKey(artifactKey);
 
-    ProvisioningUI provisioningUI = ProvisioningUI.getDefaultUI();
+    ProvisioningManager provisioningManager = CoreActivator.getInstance().getProvisioningManager();
 
     List<URI> uris = Arrays
-        .asList(provisioningUI.getRepositoryTracker().getKnownRepositories(provisioningUI.getSession()));
+        .asList(provisioningManager.getRepositoryTracker().getKnownRepositories(provisioningManager.getSession()));
     Collections.sort(uris);// stupid trick to make eclipse.org repos being
     // searched almost first
 
@@ -69,7 +70,7 @@ public class P2SourceLocator implements ISourceArtifactLocator {
       }
       IArtifactRepository artifactRepo = null;
       try {
-        artifactRepo = provisioningUI.loadArtifactRepository(repo, false, monitor);
+        artifactRepo = provisioningManager.loadArtifactRepository(repo, false, monitor);
       } catch (ProvisionException ignored) {
         ignored.printStackTrace();
         // local urls seem to fail
@@ -83,7 +84,7 @@ public class P2SourceLocator implements ISourceArtifactLocator {
         try {
           return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);
         } catch (Exception e) {
-          e.printStackTrace();
+          CoreActivator.log("Failed to save artifact", e);
         }
       }
     }
@@ -95,13 +96,18 @@ public class P2SourceLocator implements ISourceArtifactLocator {
     Files.createDirectories(cacheFolder);
     IArtifactKey artifactKey = artifactDescriptor.getArtifactKey();
     Path sourcePath = getLocalSourcePath(cacheFolder, artifactKey);
-    if (!Files.exists(sourcePath)) {
+    boolean missing = !Files.exists(sourcePath);
+    if (missing) {
       File sourceFile = Files.createFile(sourcePath).toFile();
       try (FileOutputStream stream = new FileOutputStream(sourceFile)) {
         artifactRepo.getArtifact(artifactDescriptor, stream, monitor);
       }
     }
-    return getLocalBundleSourcePathIfExists(cacheFolder, artifactKey);
+    IPath localBundle = getLocalBundleSourcePathIfExists(cacheFolder, artifactKey);
+    if (missing && localBundle != null) {
+      CoreActivator.log("Saved " + localBundle);
+    }
+    return localBundle;
   }
 
 }

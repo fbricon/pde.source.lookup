@@ -9,15 +9,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.jboss.tools.pde.sourcelookup.core,
  org.eclipse.ui.workbench,
  org.eclipse.swt,
- org.eclipse.debug.ui,
  org.eclipse.jface,
  org.eclipse.jdt.core,
  org.eclipse.jdt.ui,
- org.eclipse.equinox.p2.metadata,
- org.eclipse.equinox.p2.core,
- org.eclipse.equinox.p2.repository,
- org.eclipse.equinox.p2.ui,
- org.eclipse.equinox.p2.operations,
  org.eclipse.core.expressions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.jboss.tools.pde.sourcelookup.ui

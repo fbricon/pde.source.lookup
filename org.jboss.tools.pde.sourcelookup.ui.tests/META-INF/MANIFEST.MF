@@ -6,4 +6,8 @@ Bundle-Version: 0.1.0.qualifier
 Fragment-Host: org.jboss.tools.pde.sourcelookup.ui
 Bundle-Vendor: Red Hat Inc.
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.junit;bundle-version="4.12.0"
+Require-Bundle: org.junit;bundle-version="4.12.0",
+ org.eclipse.core.resources,
+ org.eclipse.equinox.p2.operations,
+ org.eclipse.equinox.p2.ui
+Automatic-Module-Name: org.jboss.tools.pde.sourcelookup.ui.tests

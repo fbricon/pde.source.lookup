@@ -9,15 +9,13 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 
-package org.jboss.tools.pde.sourcelookup.core.internal;
+package org.jboss.tools.pde.sourcelookup.core.internal.maven;
 
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.jboss.tools.pde.sourcelookup.core.internal.maven.M2eBasedSourceLocator;
-import org.jboss.tools.pde.sourcelookup.core.internal.maven.MavenUtils;
-import org.jboss.tools.pde.sourcelookup.core.internal.maven.SimpleMavenSourceLocator;
+import org.jboss.tools.pde.sourcelookup.core.internal.ISourceArtifactLocator;
 
 public class MavenSourceLocatorWrapper implements ISourceArtifactLocator {
 

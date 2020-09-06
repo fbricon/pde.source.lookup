@@ -8,16 +8,18 @@
  * Contributors:
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
-package org.jboss.tools.pde.sourcelookup.ui.internal.jobs;
+package org.jboss.tools.pde.sourcelookup.core.internal.jobs;
 
 import org.jboss.tools.pde.sourcelookup.core.internal.CachedSourceLocator;
-import org.jboss.tools.pde.sourcelookup.core.internal.MavenSourceLocatorWrapper;
-import org.jboss.tools.pde.sourcelookup.core.internal.jobs.AbstractSourceDownloadJob;
+import org.jboss.tools.pde.sourcelookup.core.internal.maven.MavenSourceLocatorWrapper;
+import org.jboss.tools.pde.sourcelookup.core.internal.p2.P2SourceLocator;
 
-public class P2SourceDownloadJob extends AbstractSourceDownloadJob {
+public class BundleSourceDownloadJob extends AbstractSourceDownloadJob {
 
-  public P2SourceDownloadJob() {
-    super("Plugin Sources Download", new CachedSourceLocator(), new MavenSourceLocatorWrapper(), new P2SourceLocator());
+  public BundleSourceDownloadJob() {
+    super("Bundle Sources Download", new CachedSourceLocator(), 
+                                     new MavenSourceLocatorWrapper(), 
+                                     new P2SourceLocator());
   }
 
 }

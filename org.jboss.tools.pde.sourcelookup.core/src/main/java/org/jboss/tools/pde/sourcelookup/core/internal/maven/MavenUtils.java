@@ -13,6 +13,7 @@ package org.jboss.tools.pde.sourcelookup.core.internal.maven;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import com.google.common.io.Files;
 public class MavenUtils {
 
   private static final boolean isM2eAvailable;
+
   private static Map<String, GAV> SHA1_MAP = new ConcurrentHashMap<>();
 
   static {
@@ -39,8 +41,7 @@ public class MavenUtils {
   }
 
   public static boolean isM2eAvailable() {
-    boolean toto = Platform.getBundle("org.eclipse.m2e.core") != null;
-    return toto;
+    return isM2eAvailable;
   }
 
   public static GAV getGAV(File jar) {
@@ -83,7 +84,9 @@ public class MavenUtils {
             return null;
           }
           Properties props = new Properties();
-          props.load(zip.getInputStream(zipEntry));
+          try (InputStream is = zip.getInputStream(zipEntry)) {
+            props.load(is);
+          }
           String groupId = props.getProperty("groupId");
           String artifactId = props.getProperty("artifactId");
           String version = props.getProperty("version");

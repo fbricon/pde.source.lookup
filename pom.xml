@@ -29,7 +29,7 @@
     <tycho-extras-version>${tycho-version}</tycho-extras-version>
     <tycho.testArgLine>-Xmx800m -noverify ${tycho.test.platformArgs}</tycho.testArgLine>
     <tycho.test.platformArgs></tycho.test.platformArgs>
-    <jacoco-version>0.7.6.201602180812</jacoco-version>
+    <jacoco-version>0.8.5</jacoco-version>
     <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
   </properties>
 
@@ -49,18 +49,11 @@
     </repository>
 
     <repository>
-      <id>mars</id>
+      <id>2020-06</id>
       <layout>p2</layout>
-      <url>http://download.eclipse.org/releases/mars</url>
+      <url>http://download.eclipse.org/releases/2020-06</url>
     </repository>
   </repositories>
-	<pluginRepositories>
-	   <pluginRepository>
-	     <id>tycho-snapshots</id>
-	     <url>https://repo.eclipse.org/content/repositories/tycho-snapshots/</url>
-	   </pluginRepository>
-	</pluginRepositories>
-
   <build>
     <plugins>
       <plugin>

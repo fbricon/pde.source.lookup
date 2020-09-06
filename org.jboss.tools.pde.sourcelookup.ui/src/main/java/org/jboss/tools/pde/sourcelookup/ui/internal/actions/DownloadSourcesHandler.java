@@ -30,8 +30,8 @@ import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 import org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils;
-import org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator;
 
 /**
  * @author Fred Bricon
@@ -43,7 +43,7 @@ public class DownloadSourcesHandler extends AbstractHandler {
     ISelection selection = HandlerUtil.getCurrentSelection(event);
     Collection<IPackageFragmentRoot> fragments = getSelectedClasspathEntries(selection);
     if (!fragments.isEmpty()) {
-      UIActivator.getInstance().getSourceLookupManager()
+      CoreActivator.getInstance().getSourceLookupManager()
       .findSources(fragments.toArray(new IPackageFragmentRoot[fragments.size()]));
     }
     return null;

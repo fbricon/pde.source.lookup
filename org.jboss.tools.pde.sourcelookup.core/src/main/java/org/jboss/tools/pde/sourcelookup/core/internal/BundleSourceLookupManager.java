@@ -9,22 +9,22 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 
-package org.jboss.tools.pde.sourcelookup.ui.internal;
+package org.jboss.tools.pde.sourcelookup.core.internal;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.jboss.tools.pde.sourcelookup.ui.internal.jobs.P2SourceDownloadJob;
+import org.jboss.tools.pde.sourcelookup.core.internal.jobs.BundleSourceDownloadJob;
 
 /**
  * @author Fred Bricon
  *
  */
-public class P2SourceLookupManager implements ISourceLookupManager {
+public class BundleSourceLookupManager implements ISourceLookupManager {
 
-  private P2SourceDownloadJob sourceLookupJob;
+  private BundleSourceDownloadJob sourceLookupJob;
 
-  public P2SourceLookupManager(P2SourceDownloadJob sourceLookupJob) {
-    Assert.isNotNull(sourceLookupJob, "source lookup job can't be null");
+  public BundleSourceLookupManager(BundleSourceDownloadJob sourceLookupJob) {
+    Assert.isNotNull(sourceLookupJob, "Source lookup job can't be null");
     this.sourceLookupJob = sourceLookupJob;
   }
 

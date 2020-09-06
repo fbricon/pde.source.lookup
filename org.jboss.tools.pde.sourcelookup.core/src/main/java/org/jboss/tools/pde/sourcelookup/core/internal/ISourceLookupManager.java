@@ -9,7 +9,7 @@
  *     Red Hat, Inc. - initial API and implementation
  ******************************************************************************/
 
-package org.jboss.tools.pde.sourcelookup.ui.internal;
+package org.jboss.tools.pde.sourcelookup.core.internal;
 
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 

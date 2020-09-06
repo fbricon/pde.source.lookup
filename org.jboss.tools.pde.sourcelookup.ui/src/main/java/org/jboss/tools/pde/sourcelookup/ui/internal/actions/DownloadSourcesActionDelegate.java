@@ -13,7 +13,6 @@ package org.jboss.tools.pde.sourcelookup.ui.internal.actions;
 import static org.jboss.tools.pde.sourcelookup.core.internal.utils.ClasspathUtils.hasSources;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -32,7 +31,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
 import org.jboss.tools.pde.sourcelookup.core.internal.preferences.SourceLookupPreferences;
-import org.jboss.tools.pde.sourcelookup.ui.internal.UIActivator;
 
 @SuppressWarnings("restriction")
 public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IObjectActionDelegate {
@@ -51,8 +49,7 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
     }
 
     Set<IPackageFragmentRoot> queue = new LinkedHashSet<>();
-    for(Iterator<?> it = selection.iterator(); it.hasNext();) {
-      Object element = it.next();
+    for (Object element : selection) {
       if(element instanceof IPackageFragmentRoot) {
         IPackageFragmentRoot fragment = (IPackageFragmentRoot) element;
         try {
@@ -106,7 +103,7 @@ public class DownloadSourcesActionDelegate implements IEditorActionDelegate, IOb
 
   private void findSources(Collection<IPackageFragmentRoot> queue) {
     if (!queue.isEmpty()) {
-      UIActivator.getInstance().getSourceLookupManager()
+      CoreActivator.getInstance().getSourceLookupManager()
       .findSources(queue.toArray(new IPackageFragmentRoot[queue.size()]));
     }
   }

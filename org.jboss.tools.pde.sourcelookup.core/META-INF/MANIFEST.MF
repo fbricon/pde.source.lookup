@@ -18,7 +18,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.p2.metadata,
  org.eclipse.equinox.p2.metadata.repository,
  org.eclipse.m2e.core;resolution:=optional,
- org.eclipse.m2e.maven.runtime;resolution:=optional
+ org.eclipse.m2e.maven.runtime;resolution:=optional,
+ org.eclipse.equinox.p2.core,
+ org.eclipse.equinox.p2.engine
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.jboss.tools.pde.sourcelookup.ui,org.jboss.tools.pde.sourcelookup.ui.tests",
@@ -28,3 +30,4 @@ Export-Package: org.jboss.tools.pde.sourcelookup.core.internal;x-friends:="org.j
 Import-Package: com.google.common.hash;version="15.0.0",
  com.google.common.io;version="15.0.0",
  com.google.gson
+Automatic-Module-Name: org.jboss.tools.pde.sourcelookup.core

@@ -16,6 +16,7 @@ import static org.jboss.tools.pde.sourcelookup.core.internal.utils.ProjectUtils.
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -58,7 +59,15 @@ public class ReattachProjectBundleSourcesJob extends Job {
 
   @Override
   protected IStatus run(IProgressMonitor monitor) {
-    IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+    IWorkspace workspace = null;
+    try {
+      workspace = ResourcesPlugin.getWorkspace();
+    } catch (Throwable isClosing) {
+      return Status.CANCEL_STATUS;
+    }
+
+    IProject[] projects = workspace.getRoot().getProjects();
     pluginContainerEntries = Stream.of(projects).filter(p -> isPluginProject(p))
         .map(p -> ClasspathUtils.getPluginContainerEntries(p)) //
         .flatMap(binaries -> Stream.of(binaries)) //
