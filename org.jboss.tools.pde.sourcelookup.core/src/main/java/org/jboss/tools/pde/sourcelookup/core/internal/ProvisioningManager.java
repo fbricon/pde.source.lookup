@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009-2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,9 +9,10 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation of org.eclipse.equinox.p2.ui.ProvisioningUI
  *     Sonatype, Inc. - ongoing development
  *     Red Hat Inc. - Bug 460967
+ *     Red Hat Inc. - stripped down org.eclipse.equinox.p2.ui.ProvisioningUI to ProvisioningManager
  ******************************************************************************/
 
 package org.jboss.tools.pde.sourcelookup.core.internal;
