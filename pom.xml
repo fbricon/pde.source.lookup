@@ -21,11 +21,11 @@
   <groupId>org.jboss.tools.pde.sourcelookup</groupId>
   <artifactId>parent</artifactId>
   <name>org.jboss.tools.pde.sourcelookup.parent</name>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2016</inceptionYear>
   <properties>
-    <tycho-version>1.2.0-SNAPSHOT</tycho-version>
+    <tycho-version>2.0.0</tycho-version>
     <tycho-extras-version>${tycho-version}</tycho-extras-version>
     <tycho.testArgLine>-Xmx800m -noverify ${tycho.test.platformArgs}</tycho.testArgLine>
     <tycho.test.platformArgs></tycho.test.platformArgs>
