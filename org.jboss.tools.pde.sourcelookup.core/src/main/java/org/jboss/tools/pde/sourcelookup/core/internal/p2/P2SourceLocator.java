@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
@@ -66,15 +67,16 @@ public class P2SourceLocator implements ISourceArtifactLocator {
     // searched almost first
 
     Path cacheFolder = SourceLookupPreferences.getInstance().getDownloadedSourcesDirectory();
+    SubMonitor subMonitor = SubMonitor.convert(monitor, uris.size() * 100);
     for (URI repo : uris) {
       if (monitor.isCanceled()) {
         return null;
       }
       IArtifactRepository artifactRepo = null;
       try {
-        artifactRepo = provisioningManager.loadArtifactRepository(repo, false, monitor);
+        artifactRepo = provisioningManager.loadArtifactRepository(repo, false, subMonitor.newChild(90));
       } catch (ProvisionException ignored) {
-        ignored.printStackTrace();
+        CoreActivator.log("Failed to load artifact repository " + repo + ":" + ignored.getMessage());
         // local urls seem to fail
       }
       if (artifactRepo == null || !artifactRepo.contains(sourceKey)) {
@@ -84,7 +86,9 @@ public class P2SourceLocator implements ISourceArtifactLocator {
       IArtifactDescriptor[] results = artifactRepo.getArtifactDescriptors(sourceKey);
       if (results.length > 0) {
         try {
-          return saveArtifact(artifactRepo, results[0], cacheFolder, monitor);
+          IPath artifact = saveArtifact(artifactRepo, results[0], cacheFolder, subMonitor.newChild(10));
+          subMonitor.done();
+          return artifact;
         } catch (Exception e) {
           CoreActivator.log("Failed to save artifact", e);
         }

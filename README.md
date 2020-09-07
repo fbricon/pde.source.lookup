@@ -12,7 +12,7 @@ the PDE Source Lookup plugin automatically reattaches thoses sources upon restar
 This behavior can be disabled in `Preferences` > `Plug-in Development` > `Source Lookup`.
 
 ## installation
-- Requires an Eclipse Mars.2 or Neon installation (might work on older versions)
+- Requires an Eclipse Mars.2 or more recent installation (might work on older versions)
 - Requires Java 8 to run.
 - In Eclipse, either:
   - go to `Help` > `Eclipse Marketplace…` to search PDE Source Lookup from the [Eclipse Marketplace](https://marketplace.eclipse.org/content/pde-source-lookup)
