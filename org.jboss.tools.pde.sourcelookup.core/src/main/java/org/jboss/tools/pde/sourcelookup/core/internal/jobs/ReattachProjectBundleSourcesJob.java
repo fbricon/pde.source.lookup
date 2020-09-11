@@ -38,19 +38,14 @@ public class ReattachProjectBundleSourcesJob extends Job {
 
   private IPackageFragmentRoot[] pluginContainerEntries;
 
-  /**
-   * @param name
-   */
   public ReattachProjectBundleSourcesJob() {
     super("Collecting plugin projects");
     addJobChangeListener(new JobChangeAdapter() {
       @Override
       public void done(IJobChangeEvent event) {
         if (event.getResult().isOK() && pluginContainerEntries != null && pluginContainerEntries.length > 0) {
-          // System.err.println("Reattaching bundle sources for " +
-          // pluginContainerEntries.length + " plugin containers entries");
           AbstractSourceDownloadJob sourceAttacherJob = new AbstractSourceDownloadJob(
-              "Attaching project bundle sources", new CachedSourceLocator()) {
+              "Re-attaching project bundle sources", new CachedSourceLocator()) {
           };
           sourceAttacherJob.queue(pluginContainerEntries);
           sourceAttacherJob.schedule();
