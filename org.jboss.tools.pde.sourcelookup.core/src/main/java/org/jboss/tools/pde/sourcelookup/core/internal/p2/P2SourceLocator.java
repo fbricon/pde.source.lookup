@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.operations.RepositoryTracker;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
@@ -61,8 +62,13 @@ public class P2SourceLocator implements ISourceArtifactLocator {
 
     ProvisioningManager provisioningManager = CoreActivator.getInstance().getProvisioningManager();
 
+    RepositoryTracker repositoryTracker = provisioningManager.getRepositoryTracker();
+    if (repositoryTracker == null) {
+      CoreActivator.log("Failed to load repositoryTracker");
+      return null;
+    }
     List<URI> uris = Arrays
-        .asList(provisioningManager.getRepositoryTracker().getKnownRepositories(provisioningManager.getSession()));
+        .asList(repositoryTracker.getKnownRepositories(provisioningManager.getSession()));
     Collections.sort(uris);// stupid trick to make eclipse.org repos being
     // searched almost first
 

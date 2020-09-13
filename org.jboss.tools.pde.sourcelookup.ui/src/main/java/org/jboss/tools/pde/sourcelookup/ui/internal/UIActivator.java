@@ -13,6 +13,7 @@
 package org.jboss.tools.pde.sourcelookup.ui.internal;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.jboss.tools.pde.sourcelookup.core.internal.CoreActivator;
@@ -28,6 +29,10 @@ public class UIActivator implements BundleActivator {
   @Override
   public void start(BundleContext context) throws Exception {
     instance = this;
+    // Force loading of org.eclipse.equinox.p2.ui's RepositoryTracker's
+    // implementation, or else the source lookup won't be able to work,
+    // until user's manually triggered it themselves. Ugly AF.
+    ProvisioningUI.getDefaultUI();
   }
 
   @Override
