@@ -55,7 +55,7 @@ public class CachedSourceLocator implements ISourceArtifactLocator {
    */
   private IPath findSourcesNextToFile(File jar, IProgressMonitor monitor) {
     String name = jar.getName();
-    if (name.endsWith(".jar")) {
+    if (name.endsWith(".jar") && !name.endsWith("-sources.jar")) {
       String sourceName = name.replace(".jar", "-sources.jar");
       File sourceFile = new File(jar.getParentFile(), sourceName);
       if (sourceFile.isFile()) {

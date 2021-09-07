@@ -39,7 +39,7 @@ public class SimpleMavenSourceLocator implements ISourceArtifactLocator {
 
   private java.nio.file.Path M2_REPO = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
-  private static final String SHA1_SEARCH_QUERY = "http://search.maven.org/solrsearch/select?wt=json&rows=1&q=1:";
+  private static final String SHA1_SEARCH_QUERY = "https://search.maven.org/solrsearch/select?wt=json&rows=1&q=1:";
 
   @Override
   public IPath findSources(File jar, IProgressMonitor monitor) {
