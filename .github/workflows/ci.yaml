@@ -25,5 +25,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ github.token }}
-        publish_dir: ./target/site
+        publish_dir: ./org.jboss.tools.pde.sourcelookup.site/target/repository
         destination_dir: updates
