@@ -1,4 +1,4 @@
-name: Publish Maven Site
+name: Build
 
 on:
   push:
@@ -22,12 +22,12 @@ jobs:
       run: ./mvnw -B verify -Pflat-repo
     
     - name: Deploy p2 update site
-        if: github.ref == 'refs/heads/master'
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: "${{secrets.GITHUB_TOKEN}}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: "Development Build"
-          files: |
-            org.jboss.tools.pde.sourcelookup.site/target/flat-repository/*
+      if: github.ref == 'refs/heads/master'
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{secrets.GITHUB_TOKEN}}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          org.jboss.tools.pde.sourcelookup.site/target/flat-repository/*

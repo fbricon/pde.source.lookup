@@ -1,6 +1,5 @@
 # PDE Source Lookup
-
-[![Build Status](https://travis-ci.org/fbricon/pde.source.lookup.svg?branch=master)](https://travis-ci.org/fbricon/pde.source.lookup)
+[![Build](https://github.com/fbricon/pde.source.lookup/actions/workflows/ci.yaml/badge.svg)](https://github.com/fbricon/pde.source.lookup/actions/workflows/ci.yaml)
 
 Proof of Concept to automatically fetch missing source bundles from enabled p2 repositories, when opening a bundle jar (similar to m2e).
 It's also possible to fetch all sources from the `Plug-in Dependencies` classpath container, with a right-click and selecting `Download Bundle Sources`.
