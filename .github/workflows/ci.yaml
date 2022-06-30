@@ -19,11 +19,15 @@ jobs:
         cache: 'maven'
 
     - name: Build with Maven
-      run: ./mvnw -B verify 
-
-    - name: Deploy p2 repo to Github Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ github.token }}
-        publish_dir: ./org.jboss.tools.pde.sourcelookup.site/target/repository
-        destination_dir: updates
+      run: ./mvnw -B verify -Pflat-repo
+    
+    - name: Deploy p2 update site
+        if: github.ref == 'refs/heads/master'
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{secrets.GITHUB_TOKEN}}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            org.jboss.tools.pde.sourcelookup.site/target/flat-repository/*
